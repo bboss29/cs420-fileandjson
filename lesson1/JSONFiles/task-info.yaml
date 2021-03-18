@@ -1,0 +1,2073 @@
+type: edu
+files:
+- name: src/Task.java
+  visible: true
+  placeholders:
+  - offset: 621
+    length: 128
+    placeholder_text: '/* TODO: create a JSON object with the contents of  "filename".
+      You can use the method below to help you read the file. */'
+    initial_state:
+      length: 122
+      offset: 570
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |-
+      JsonObject obj = (JsonObject) Jsoner.deserialize(readFile(filename), new JsonObject());
+            return obj;
+  - offset: 1153
+    length: 106
+    placeholder_text: /* Complete this using the parameter passed to this method.
+      */
+    initial_state:
+      length: 62
+      offset: 802
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: new BufferedReader(new FileReader(filename))
+  - offset: 1272
+    length: 193
+    placeholder_text: /* Put in code to read the file line by line. */
+    initial_state:
+      length: 48
+      offset: 877
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |-
+      String line = reader.readLine();
+                while(line != null ) {
+                    content = content + line;
+                    line = reader.readLine();
+                }
+  - offset: 1576
+    length: 65
+    placeholder_text: /* Put in the variable that should be returned. */
+    initial_state:
+      length: 50
+      offset: 1036
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: content;
+  text: |-
+    import com.github.cliftonlabs.json_simple.JsonObject;
+    import com.github.cliftonlabs.json_simple.Jsoner;
+
+    import java.io.BufferedReader;
+    import java.io.FileReader;
+    import java.io.IOException;
+
+    public class Task {
+      public static void main(String[] args){
+          Task t = new Task();
+          JsonObject doc = t.readJson("./resources/restaurant-data.json");
+          Database db = new Database(doc);
+          System.out.println(db.getRestaurant("Hometown BBQ"));
+          System.out.println(db.getAvgReviews("Casa Enrique"));
+      }
+
+      public JsonObject readJson(String filename) {
+          /* TODO: create a JSON object with the contents of  "filename". You can use the method below to help you read the file. */
+      }
+
+      public String readFile(String filename){
+          String content = "";
+          try(BufferedReader reader = /* Complete this using the parameter passed to this method. */){
+              /* Put in code to read the file line by line. */
+          } catch(IOException e) {
+              e.printStackTrace();
+              System.exit(-1);
+          }
+          return /* Put in the variable that should be returned. */
+      }
+    }
+  learner_created: false
+- name: test/Tests.java
+  visible: false
+  text: |-
+    import com.github.cliftonlabs.json_simple.JsonArray;
+    import com.github.cliftonlabs.json_simple.JsonObject;
+    import org.junit.Assert;
+    import org.junit.Test;
+
+    import java.math.BigDecimal;
+
+    public class Tests {
+      @Test
+      public void testSolution() {
+        Task t = new Task();
+        JsonObject doc = t.readJson("./test/restaurant-data.json");
+        Database db = new Database(doc);
+        // put your test here
+        String contents = t.readFile("./test/restaurant-data.json");
+        Assert.assertEquals("Your readFile method is not reading the file correctly.",20423,contents.length());
+        Assert.assertTrue("Are you sure you loaded a JsonObject?",doc.containsKey("restaurants"));
+        JsonArray restaurants = (JsonArray)doc.get("restaurants");
+        Assert.assertEquals("Loaded wrong number of restaurants",10,restaurants.size());
+        JsonObject obj = db.getRestaurant("Kang Ho Dong Baekjeong");
+        JsonObject kang = (JsonObject)restaurants.get(2);
+        Assert.assertEquals("Your Get Restaurant method is not working correctly. Try printing out the outputs",kang,obj);
+        Assert.assertEquals("Maybe the key value pairs are not quite correct. Check Kang Ho Dong Baekjeong",new BigDecimal("3"),(BigDecimal) obj.get("id"));
+        Assert.assertEquals("You are not computing the average review score correctly. Check 'Superiority Burger' for example.",4.3,db.getAvgReviews("Superiority Burger"),0.05);
+        Assert.assertEquals("It seems the number of fields for some restaurants is wrong. Check how you are reading/converting the file to Json and check Kang Ho Dong Baekjeong",9,db.getRestaurant("Kang Ho Dong Baekjeong").size());
+      }
+    }
+  learner_created: false
+- name: src/Database.java
+  visible: true
+  placeholders:
+  - offset: 192
+    length: 0
+    placeholder_text: "/* TODO \nDeclare a member variable that can \nbe EASILY set\
+      \ from the constructor. */"
+    initial_state:
+      length: 83
+      offset: 136
+    initialized_from_dependency: false
+    selected: false
+    status: Unchecked
+    encrypted_possible_answer: public JsonObject data;
+  - offset: 260
+    length: 0
+    placeholder_text: "/* TODO \nset the memebr variable declared above.*/"
+    initial_state:
+      length: 50
+      offset: 267
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: this.data = data;
+  - offset: 338
+    length: 0
+    placeholder_text: "/* TODO \nComplete this method as specified. */"
+    initial_state:
+      length: 46
+      offset: 383
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |-
+      JsonArray rests = (JsonArray)this.data.get("restaurants");
+              int i=0;
+              JsonObject result = (JsonObject) rests.get(i);
+              while(!result.get("name").equals(name) && i<rests.size())
+                  result = (JsonObject) rests.get(++i);
+              if(i>=rests.size())
+                  return null;
+              else
+                  return result;
+  - offset: 723
+    length: 0
+    placeholder_text: "/* TODO \nComplete this method as specified.\n The previous\
+      \ method may be of help. \n*/"
+    initial_state:
+      length: 84
+      offset: 491
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |-
+      JsonObject result = getRestaurant(name);
+              JsonArray reviews = (JsonArray) result.get("reviews");
+              double sum = 0;
+              for(int i=0;i<reviews.size();i++)
+                  sum+= Double.valueOf(((JsonObject) reviews.get(i)).get("rating").toString());
+              return sum/reviews.size();
+  text: "import com.github.cliftonlabs.json_simple.JsonArray;\nimport com.github.cliftonlabs.json_simple.JsonObject;\n\
+    \npublic class Database {\n    /* TODO \nDeclare a member variable that can \n\
+    be EASILY set from the constructor. */\n\n    public Database(JsonObject data){\n\
+    \        /* TODO \nset the memebr variable declared above.*/\n    }\n\n    public\
+    \ JsonObject getRestaurant(String name){\n        /* TODO \nComplete this method\
+    \ as specified. */\n    }\n\n    public double getAvgReviews(String name){\n \
+    \       /* TODO \nComplete this method as specified.\n The previous method may\
+    \ be of help. \n*/\n    }\n}\n"
+  learner_created: false
+- name: test/restaurant-data.json
+  visible: true
+  text: |-
+    {
+      "restaurants": [{
+        "id": 1,
+        "name": "Mission Chinese Food",
+        "neighborhood": "Manhattan",
+        "photograph": "1.jpg",
+        "address": "171 E Broadway, New York, NY 10002",
+        "latlng": {
+          "lat": 40.713829,
+          "lng": -73.989667
+        },
+        "cuisine_type": "Asian",
+        "operating_hours": {
+          "Monday": "5:30 pm - 11:00 pm",
+          "Tuesday": "5:30 pm - 12:00 am",
+          "Wednesday": "5:30 pm - 12:00 am",
+          "Thursday": "5:30 pm - 12:00 am",
+          "Friday": "5:30 pm - 12:00 am",
+          "Saturday": "12:00 pm - 4:00 pm, 5:30 pm - 12:00 am",
+          "Sunday": "12:00 pm - 4:00 pm, 5:30 pm - 11:00 pm"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits — the kung pao pastrami, the thrice cooked bacon —but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank."
+          },
+          {
+            "name": "Morgan",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "This place is a blast. Must orders: GREEN TEA NOODS, sounds gross (to me at least) but these were incredible!, Kung pao pastrami (but you already knew that), beef tartare was a fun appetizer that we decided to try, the spicy ma po tofu SUPER spicy but delicous, egg rolls and scallion pancake i could have passed on... I wish we would have gone with a larger group, so much more I would have liked to try!"
+          },
+          {
+            "name": "Jason",
+            "date": "October 26, 2016",
+            "rating": 3,
+            "comments": "I was VERY excited to come here after seeing and hearing so many good things about this place. Having read much, I knew going into it that it was not going to be authentic Chinese. The place was edgy, had a punk rock throwback attitude, and generally delivered the desired atmosphere. Things went downhill from there though. The food was okay at best and the best qualities were easily overshadowed by what I believe to be poor decisions by the kitchen staff."
+          }
+        ]
+      }, {
+        "id": 2,
+        "name": "Emily",
+        "neighborhood": "Brooklyn",
+        "photograph": "2.jpg",
+        "address": "919 Fulton St, Brooklyn, NY 11238",
+        "latlng": {
+          "lat": 40.683555,
+          "lng": -73.966393
+        },
+        "cuisine_type": "Pizza",
+        "operating_hours": {
+          "Monday": "5:30 pm - 11:00 pm",
+          "Tuesday": "5:30 pm - 11:00 pm",
+          "Wednesday": "5:30 pm - 11:00 pm",
+          "Thursday": "5:30 pm - 11:00 pm",
+          "Friday": "5:30 pm - 11:00 pm",
+          "Saturday": "5:00 pm - 11:30 pm",
+          "Sunday": "12:00 pm - 3:00 pm, 5:00 pm - 11:00 pm"
+        },
+        "reviews": [{
+            "name": "Steph",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Five star food, two star atmosphere. I would definitely get takeout from this place - but dont think I have the energy to deal with the hipster ridiculousness again. By the time we left the wait was two hours long."
+          },
+          {
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "This cozy Clinton Hill restaurant excels at both straightforward and unusual wood-fired pizzas. If you want a taste of the latter, consider ordering the Emily, which is topped with mozzarella, pistachios, truffled sottocenere cheese, and honey. The menu includes salads and a handful of starters, as well as a burger that some meat connoisseurs consider to be among the best in the city."
+          },
+          {
+            "name": "Sam",
+            "date": "October 26, 2016",
+            "rating": 5,
+            "comments": "5 star atmosphere as it is very cozy with great staff. 5 star food as their Emmy burger is outrageously good. and its on a pretzel bun.. Too juicy for its own good and downright addicting. Also try the Colony pizza. Many others looked like worth competitors, but the Colony really found its way to my heart. when you start with a great crust, top it with top notch cheese and sauce, you've got a winner. But, if you go a step further and add the salty from the pepperoni, the sweet from the honey, and the spicy from the chili oil.... your mouth is confused and happy at the same time."
+          }
+        ]
+      }, {
+        "id": 3,
+        "name": "Kang Ho Dong Baekjeong",
+        "neighborhood": "Manhattan",
+        "photograph": "3.jpg",
+        "address": "1 E 32nd St, New York, NY 10016",
+        "latlng": {
+          "lat": 40.747143,
+          "lng": -73.985414
+        },
+        "cuisine_type": "Asian",
+        "operating_hours": {
+          "Monday": "11:30 am - 2:00 am",
+          "Tuesday": "11:30 am - 2:00 am",
+          "Wednesday": "11:30 am - 2:00 am",
+          "Thursday": "11:30 am - 2:00 am",
+          "Friday": "11:30 am - 6:00 am",
+          "Saturday": "11:30 am - 6:00 am",
+          "Sunday": "11:30 am - 2:00 am"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "The tables at this 32nd Street favorite are outfitted with grills for cooking short ribs, brisket, beef tongue, rib eye, and pork jowl. The banchan plates are uniformly good, and Deuki Hong’s menu also includes winning dishes like stir-fried squid noodles, kimchi stew, and seafood pancakes. If it’s available, make sure to order the kimchi and rice “lunchbox.” Baekjeong is a great place for large groups and birthday parties."
+          },
+          {
+            "name": "ZS",
+            "date": "October 26, 2016",
+            "rating": 5,
+            "comments": "I've been to Korea before and many other Korean BBQ places. We had the regular pork belly and a beef (forgot which cut) and a seafood tofu soup. Two meat and a soup was just prefect for the two of us. We could have done one meat and one soup. The portions of the meat are great! The beef was juicy, tender and so good. The sides were excellent. "
+          },
+          {
+            "name": "Emily",
+            "date": "October 26, 2016",
+            "rating": 2,
+            "comments": "MEH. I've tried their Jersey location as well but Kang Ho Dong meat quality is severely decreasing. A Korean bbq place with whatever meat? I think NOT!"
+          }
+        ]
+      }, {
+        "id": 4,
+        "name": "Katz's Delicatessen",
+        "neighborhood": "Manhattan",
+        "photograph": "4.jpg",
+        "address": "205 E Houston St, New York, NY 10002",
+        "latlng": {
+          "lat": 40.722216,
+          "lng": -73.987501
+        },
+        "cuisine_type": "American",
+        "operating_hours": {
+          "Monday": "8:00 am - 10:30 pm",
+          "Tuesday": "8:00 am - 10:30 pm",
+          "Wednesday": "8:00 am - 10:30 pm",
+          "Thursday": "8:00 am - 2:30 am",
+          "Friday": "8:00 am - Sat",
+          "Saturday": "Open 24 hours",
+          "Sunday": "Sat - 10:30 pm"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 5,
+            "comments": "In 127 years, little has changed at Katz's. It remains one of New York's — and the country's — essential Jewish delicatessens. Every inch of the massive Lower East Side space smells intensely of pastrami and rye loaves. The sandwiches are massive, so they are best when shared. Order at the counter, and don't forget to tip your slicer — your sandwich will be better for it."
+          },
+          {
+            "name": "Allen",
+            "date": "October 26, 2016",
+            "rating": 5,
+            "comments": "If I lived in NY and got diabetes from eating here every single time I ate, I would do it over and over and over again just for that first bite. These guys know how to make a sandwich. The heart attack comes free of charge! Came by while I was visiting NYC. First pit-stop when I come back :)!"
+          },
+          {
+            "name": "David",
+            "date": "October 26, 2016",
+            "rating": 2,
+            "comments": "Ok so four of us came. One more later who didn't order becauase it's so expensive and simple. Seriously, a bunch of meat albeit you can sample beforehand on rye/white/wheat bread. Cheese extra. Pickles free, you can just ask them at the pickup counter. But seriously 20 bucks gone for an non-flavored half sandwich. And a line that is long, especially if you want seating. I'm down to just take a quick look where Sally and Harry sat and leave to the other delis all around NYC. Oh and they accept Samsung pay."
+          }
+        ]
+      }, {
+        "id": 5,
+        "name": "Roberta's Pizza",
+        "neighborhood": "Brooklyn",
+        "photograph": "5.jpg",
+        "address": "261 Moore St, Brooklyn, NY 11206",
+        "latlng": {
+          "lat": 40.705089,
+          "lng": -73.933585
+        },
+        "cuisine_type": "Pizza",
+        "operating_hours": {
+          "Monday": "11:00 am - 12:00 am",
+          "Tuesday": "11:00 am - 12:00 am",
+          "Wednesday": "11:00 am - 12:00 am",
+          "Thursday": "11:00 am - 12:00 am",
+          "Friday": "11:00 am - 12:00 am",
+          "Saturday": "10:00 am - 12:00 am",
+          "Sunday": "10:00 am - 12:00 am"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Roberta's is the epicenter of the modern Brooklyn food scene.The pizzas are fantastic, but the restaurant really flexes its muscles with the vegetable dishes. In addition to the pies, consider ordering the radishes, the romaine salad, the roasted beets, and some of the charcuterie."
+          },
+          {
+            "name": "Raymond",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Roberta's, one of the better pizzas I have had in my life. Very trendy and hipsterish spot. Came here for lunch on a random weekday afternoon and when we arrived, there was a line forming already. The space is a bit cramped. You'll get to know your neighbors soon enough. The pizza is just delightful and delicious. It's a ncie plus that you get to see them firing up the pizzas in the corner. The major issue with Roberta's is the trek out to the Williamsburg/Bushwick."
+          },
+          {
+            "name": "Laurel",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "The pizza is fantastic, not THE best I've ever had, but would definitely go back since it has great food and great ambiance. Definitely worth going to. It has A LOT of hype in the New York food scene, and I question if it deserves all of it, but it's still a totally great spot to hit up when in the area!!"
+          }
+        ]
+      }, {
+        "id": 6,
+        "name": "Hometown BBQ",
+        "neighborhood": "Brooklyn",
+        "photograph": "6.jpg",
+        "address": "454 Van Brunt St, Brooklyn, NY 11231",
+        "latlng": {
+          "lat": 40.674925,
+          "lng": -74.016162
+        },
+        "cuisine_type": "American",
+        "operating_hours": {
+          "Monday": "Closed",
+          "Tuesday": "12:00 pm - 10:00 pm",
+          "Wednesday": "12:00 pm - 10:00 pm",
+          "Thursday": "12:00 pm - 10:00 pm",
+          "Friday": "12:00 pm - 11:00 pm",
+          "Saturday": "12:00 pm - 11:00 pm",
+          "Sunday": "12:00 pm - 9:00 pm"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Barbecue aficionados agree that Billy Durney is cooking up some of the best Texas-style barbecue in the city. Straightforward classics like smoked brisket and baby back ribs are always a strong choice, but there are also options like pork belly tacos and a lamb belly banh mi. The space is sprawling in a way that feels like the real deal, and Durney himself can usually be found working the room, and keeping a watchful eye on the smoking meats. It's counter service only, and there's often a line, but for the scene and certainly for the meat, it's easily worth the trip to Red Hook."
+          },
+          {
+            "name": "Michelle",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Overall, a great try of New York BBQ. The restaurant décor is rustic with a good amount of seats to sit and enjoy the meal. I definitely would love to come back and try that monster of a beef rib!"
+          },
+          {
+            "name": "Ai-Mei",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "mmmmmm, what a gem this is in bklyn! I loveeee how soft their brisket is here. Their pork tacos are to die for, their different variety of ribs and lastly, their lamb is not gamey at all. Super wallet friendly for the amount they give you. I highly recommend this spot- after eating here, you can definitely walk over for Steve's key lime pies."
+          }
+        ]
+      }, {
+        "id": 7,
+        "name": "Superiority Burger",
+        "neighborhood": "Manhattan",
+        "photograph": "7.jpg",
+        "address": "430 E 9th St, New York, NY 10009",
+        "latlng": {
+          "lat": 40.727397,
+          "lng": -73.983645
+        },
+        "cuisine_type": "American",
+        "operating_hours": {
+          "Monday": "11:30 am - 10:00 pm",
+          "Tuesday": "Closed",
+          "Wednesday": "11:30 am - 10:00 pm",
+          "Thursday": "11:30 am - 10:00 pm",
+          "Friday": "11:30 am - 10:00 pm",
+          "Saturday": "11:30 am - 10:00 pm",
+          "Sunday": "11:30 am - 10:00 pm"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Brooks Headley’s tiny East Village cafe is so much more than a veggie burger spot — it's one of the best bang-for-your-buck restaurants in Lower Manhattan. Headley and his crew turn seasonal vegetables into delectable salads and riffs on American comfort food favorites. The specials menu changes daily, and the rest of the menu is constantly evolving. You can get a lot of food to eat here for under $15 per person."
+          },
+          {
+            "name": "Gabriel",
+            "date": "October 26, 2016",
+            "rating": 5,
+            "comments": "I was turned on to this place following the glowing NYT review. Its near my area of the city so I figured why not go? Man they weren't kidding, Superiority Burger is probably the best vegetarian experience I've ever had!"
+          },
+          {
+            "name": "Shivi",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Great flavors and very satisfying. Craving a sandwich, I stopped by on a Friday night with a vegetarian friend. Super small location with just a few seats inside. Ambiance is a bit industrial, good is definitely much more sophisticated than the look of the place! Ordered the superiority burger anda side of potato salad. The potato salad was very light and tasted clean ( less mayo, lots of dill and some cucumber) -- refreshing for a humid summer night! Sandwich was surprisingly delicious - it is very small ( funny allusion to a White Castle burger) but it packs a punch! Not only are there layers of flavors ( amazing sauces) but the party itself had a great texture Ahmed flavor-- well done and so wonderful! Will definitely stop by again for an overall amazing burger/sandwich. Staff was super nice and accommodating but not out of the way friendly."
+          }
+        ]
+      }, {
+        "id": 8,
+        "name": "The Dutch",
+        "neighborhood": "Manhattan",
+        "photograph": "8.jpg",
+        "address": "131 Sullivan St, New York, NY 10012",
+        "latlng": {
+          "lat": 40.726584,
+          "lng": -74.002082
+        },
+        "cuisine_type": "American",
+        "operating_hours": {
+          "Monday": "11:30 am - 3:00 pm, 5:30 pm - 11:00 pm",
+          "Tuesday": "11:30 am - 3:00 pm, 5:30 pm - 11:00 pm",
+          "Wednesday": "11:30 am - 3:00 pm, 5:30 pm - 11:00 pm",
+          "Thursday": "11:30 am - 3:00 pm, 5:30 pm - 11:00 pm",
+          "Friday": "11:30 am - 3:00 pm, 5:30 pm - 11:30 pm",
+          "Saturday": "10:00 am - 3:00 pm, 5:30 pm - 11:30 pm",
+          "Sunday": "10:00 am - 3:00 pm, 5:30 pm - 11:00 pm"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Over the last five years, The Dutch has turned into the quintessential American restaurant that chef Andrew Carmellini and partners Josh Pickard and Luke Ostrom sought to evoke when it first opened. It’s a great choice when you’re craving a steak, a burger, or oysters, and the menu always includes plentiful seafood options as well as pastas. The Dutch is now an indelible part of the Soho landscape."
+          },
+          {
+            "name": "Loren",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "I randomly came here on a Saturday night. I was pleasantly surprised with the food and the service. We had the calamari and the ceviche with avocado, and then the catfish. Oh! Then we had the banana soufflé for dessert with ice cream. It was all delicious and well put together. Would love to eat here again."
+          },
+          {
+            "name": "Lori",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Aside from the slightly claustrophobic dining area and the fact that you may have difficulty hearing your dining companion, I'd return to The Dutch without hesitation. The food is surprisingly well-executed and conceived, and our dinner service flowed smoothly without a hitch. Just make sure to get a reservation in advance, as I'm sure more than just a few other people will have the same idea."
+          }
+        ]
+      }, {
+        "id": 9,
+        "name": "Mu Ramen",
+        "neighborhood": "Queens",
+        "photograph": "9.jpg",
+        "address": "1209 Jackson Ave, Queens, NY 11101",
+        "latlng": {
+          "lat": 40.743797,
+          "lng": -73.950652
+        },
+        "cuisine_type": "Asian",
+        "operating_hours": {
+          "Monday": "5:00 pm - 10:00 pm",
+          "Tuesday": "5:00 pm - 10:00 pm",
+          "Wednesday": "5:00 pm - 10:00 pm",
+          "Thursday": "5:00 pm - 10:00 pm",
+          "Friday": "5:00 pm - 11:00 pm",
+          "Saturday": "5:00 pm - 11:00 pm",
+          "Sunday": "5:00 pm - 10:00 pm"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Joshua Smookler’s two-year-old ramen shop serves one of the best tonkotsu broths around. Beyond ramen, Mu also offers some high minded plates, like foie gras-stuffed chicken wings, as well as dry-aged Japanese Wagyu beef specials. Mu is just 10 short minutes away from Midtown via the 7-train."
+          },
+          {
+            "name": "Brittany",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "Overall, I would definitely recommend this place if you enjoy thick curly noodles with a thick, intense broth.  If you don't there are still other options but I can't vouch for those."
+          },
+          {
+            "name": "Sally",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "One of the tastiest and most unique ramen places I've been to in NYC, but also the priciest. I think overall its worth the try. Not an everyday casual ramen shop though."
+          }
+        ]
+      }, {
+        "id": 10,
+        "name": "Casa Enrique",
+        "neighborhood": "Queens",
+        "photograph": "10.jpg",
+        "address": "5-48 49th Ave, Queens, NY 11101",
+        "latlng": {
+          "lat": 40.743394,
+          "lng": -73.954235
+        },
+        "cuisine_type": "Mexican",
+        "operating_hours": {
+          "Monday": "5:00 pm - 12:00 am",
+          "Tuesday": "5:00 pm - 12:00 am",
+          "Wednesday": "5:00 pm - 12:00 am",
+          "Thursday": "5:00 pm - 12:00 am",
+          "Friday": "5:00 pm - 12:00 am",
+          "Saturday": "11:00 am - 12:00 am",
+          "Sunday": "11:00 am - 12:00 am"
+        },
+        "reviews": [{
+            "name": "Steve",
+            "date": "October 26, 2016",
+            "rating": 5,
+            "comments": "Head to this laid-back Long Island City restaurant for beef tongue tacos, chicken smothered in a heady mole sauce, and a monster crab tostada. New York's only Michelin-starred Mexican restaurant is an especially cool choice for lunch during the week or drinks after work. Eater critic Ryan Sutton awarded this restaurant two stars."
+          },
+          {
+            "name": "Rob",
+            "date": "October 26, 2016",
+            "rating": 5,
+            "comments": "The hype was real. Please go. Get the ceviche. And the tres leches. You're welcome"
+          },
+          {
+            "name": "Jason",
+            "date": "October 26, 2016",
+            "rating": 4,
+            "comments": "For a Michelin star restaurant, it's fairly priced and the food is fairly good. Started with a strawberry margarita which was good in flavor but not much alcohol. Had the chicken enchiladas with salsa verde and it was really good. Great balance in flavor and a good portion. Extra tasty with their hot sauces. My wife had the lamb but it was a bit too salty for our taste. Although, it was cooked very well and fell off the bone. The highlight of the night was the tres leches cake. Probably the best I've ever had to be honest. Not too sweet and very milky. Overall, one of my top 3 favorite Mexican in NY."
+          }
+        ]
+      }]
+    }
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/Yylex.java
+  visible: true
+  text: "/* The following code was generated by JFlex 1.4.3 on 1/9/18 8:05 PM */\n\
+    \npackage com.github.cliftonlabs.json_simple;\n\n\n/**\n * This class is a scanner\
+    \ generated by \n * <a href=\"http://www.jflex.de/\">JFlex</a> 1.4.3\n * on 1/9/18\
+    \ 8:05 PM from the specification file\n * <tt>/home/loegering/cliftonlabs/workspace/json-simple/src/main/lex/jsonstrict.lex</tt>\n\
+    \ */\nclass Yylex {\n\n  /** This character denotes the end of file */\n  public\
+    \ static final int YYEOF = -1;\n\n  /** initial size of the lookahead buffer */\n\
+    \  private static final int ZZ_BUFFERSIZE = 16384;\n\n  /** lexical states */\n\
+    \  public static final int YYINITIAL = 0;\n  public static final int STRING_BEGIN\
+    \ = 2;\n\n  /**\n   * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state\
+    \ l\n   * ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l\n \
+    \  *                  at the beginning of a line\n   * l is of the form l = 2*k,\
+    \ k a non negative integer\n   */\n  private static final int ZZ_LEXSTATE[] =\
+    \ { \n     0,  0,  1, 1\n  };\n\n  /** \n   * Translates characters to character\
+    \ classes\n   */\n  private static final String ZZ_CMAP_PACKED = \n    \"\\11\\\
+    0\\1\\7\\1\\7\\2\\0\\1\\7\\22\\0\\1\\7\\1\\0\\1\\11\\10\\0\"+\n    \"\\1\\6\\\
+    1\\31\\1\\2\\1\\4\\1\\12\\12\\3\\1\\32\\6\\0\\4\\1\\1\\5\"+\n    \"\\1\\1\\24\\\
+    0\\1\\27\\1\\10\\1\\30\\3\\0\\1\\22\\1\\13\\2\\1\\1\\21\"+\n    \"\\1\\14\\5\\\
+    0\\1\\23\\1\\0\\1\\15\\3\\0\\1\\16\\1\\24\\1\\17\\1\\20\"+\n    \"\\5\\0\\1\\\
+    25\\1\\0\\1\\26\\uff82\\0\";\n\n  /** \n   * Translates characters to character\
+    \ classes\n   */\n  private static final char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);\n\
+    \n  /** \n   * Translates DFA states to action switch labels.\n   */\n  private\
+    \ static final int [] ZZ_ACTION = zzUnpackAction();\n\n  private static final\
+    \ String ZZ_ACTION_PACKED_0 =\n    \"\\2\\0\\2\\1\\1\\2\\1\\3\\1\\4\\3\\1\\1\\\
+    5\\1\\6\"+\n    \"\\1\\7\\1\\10\\1\\11\\1\\12\\1\\13\\1\\14\\1\\15\\5\\0\"+\n\
+    \    \"\\1\\14\\1\\16\\1\\17\\1\\20\\1\\21\\1\\22\\1\\23\\1\\24\"+\n    \"\\1\\\
+    0\\1\\2\\1\\0\\1\\2\\4\\0\\1\\25\\1\\26\\2\\0\"+\n    \"\\1\\27\";\n\n  private\
+    \ static int [] zzUnpackAction() {\n    int [] result = new int[45];\n    int\
+    \ offset = 0;\n    offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);\n\
+    \    return result;\n  }\n\n  private static int zzUnpackAction(String packed,\
+    \ int offset, int [] result) {\n    int i = 0;       /* index in packed string\
+    \  */\n    int j = offset;  /* index in unpacked array */\n    int l = packed.length();\n\
+    \    while (i < l) {\n      int count = packed.charAt(i++);\n      int value =\
+    \ packed.charAt(i++);\n      do result[j++] = value; while (--count > 0);\n  \
+    \  }\n    return j;\n  }\n\n\n  /** \n   * Translates a state to a row index in\
+    \ the transition table\n   */\n  private static final int [] ZZ_ROWMAP = zzUnpackRowMap();\n\
+    \n  private static final String ZZ_ROWMAP_PACKED_0 =\n    \"\\0\\0\\0\\33\\0\\\
+    66\\0\\121\\0\\154\\0\\207\\0\\66\\0\\242\"+\n    \"\\0\\275\\0\\330\\0\\66\\\
+    0\\66\\0\\66\\0\\66\\0\\66\\0\\66\"+\n    \"\\0\\363\\0\\u010e\\0\\66\\0\\u0129\\\
+    0\\u0144\\0\\u015f\\0\\u017a\\0\\u0195\"+\n    \"\\0\\66\\0\\66\\0\\66\\0\\66\\\
+    0\\66\\0\\66\\0\\66\\0\\66\"+\n    \"\\0\\u01b0\\0\\u01cb\\0\\u01e6\\0\\u01e6\\\
+    0\\u0201\\0\\u021c\\0\\u0237\\0\\u0252\"+\n    \"\\0\\66\\0\\66\\0\\u026d\\0\\\
+    u0288\\0\\66\";\n\n  private static int [] zzUnpackRowMap() {\n    int [] result\
+    \ = new int[45];\n    int offset = 0;\n    offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0,\
+    \ offset, result);\n    return result;\n  }\n\n  private static int zzUnpackRowMap(String\
+    \ packed, int offset, int [] result) {\n    int i = 0;  /* index in packed string\
+    \  */\n    int j = offset;  /* index in unpacked array */\n    int l = packed.length();\n\
+    \    while (i < l) {\n      int high = packed.charAt(i++) << 16;\n      result[j++]\
+    \ = high | packed.charAt(i++);\n    }\n    return j;\n  }\n\n  /** \n   * The\
+    \ transition table of the DFA\n   */\n  private static final int ZZ_TRANS [] =\
+    \ {\n    2, 2, 3, 4, 2, 2, 2, 5, 2, 6, \n    2, 2, 7, 8, 2, 9, 2, 2, 2, 2, \n\
+    \    2, 10, 11, 12, 13, 14, 15, 16, 16, 16, \n    16, 16, 16, 16, 16, 17, 18,\
+    \ 16, 16, 16, \n    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, \n    16, 16, 16,\
+    \ 16, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n\
+    \    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, 4, -1, -1,\
+    \ -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, -1, \n    -1, 4, 19, 20, -1, -1, -1, -1, -1, -1, \n\
+    \    -1, -1, -1, -1, -1, 20, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, -1, \n    -1, -1, 5, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    21, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, 22, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    23, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, 16, 16, 16, 16, 16, 16, 16, \n    16, -1, -1, 16,\
+    \ 16, 16, 16, 16, 16, 16, \n    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, 24, 25, \n    26, 27, 28, 29, 30, 31, 32, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    33, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, 34, 35, -1, -1, \n    34, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ 36, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, 37, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, 38, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, 39, -1, 39, -1, 39,\
+    \ -1, -1, \n    -1, -1, -1, 39, 39, -1, -1, -1, -1, 39, \n    39, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, 33, -1, 20, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, 20, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, 35, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, 38, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, 40, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, 41, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, 42, -1, 42, -1, 42, \n    -1, -1, -1, -1,\
+    \ -1, 42, 42, -1, -1, -1, \n    -1, 42, 42, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, 43, -1, 43, -1, 43, -1, -1, -1, \n    -1, -1, 43, 43, -1, -1, -1, -1,\
+    \ 43, 43, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, 44, \n    -1, 44, -1, 44,\
+    \ -1, -1, -1, -1, -1, 44, \n    44, -1, -1, -1, -1, 44, 44, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, \n  };\n\n  /* error codes */\n  private static final int\
+    \ ZZ_UNKNOWN_ERROR = 0;\n  private static final int ZZ_NO_MATCH = 1;\n  private\
+    \ static final int ZZ_PUSHBACK_2BIG = 2;\n\n  /* error messages for the codes\
+    \ above */\n  private static final String ZZ_ERROR_MSG[] = {\n    \"Unkown internal\
+    \ scanner error\",\n    \"Error: could not match input\",\n    \"Error: pushback\
+    \ value was too large\"\n  };\n\n  /**\n   * ZZ_ATTRIBUTE[aState] contains the\
+    \ attributes of state <code>aState</code>\n   */\n  private static final int []\
+    \ ZZ_ATTRIBUTE = zzUnpackAttribute();\n\n  private static final String ZZ_ATTRIBUTE_PACKED_0\
+    \ =\n    \"\\2\\0\\1\\11\\3\\1\\1\\11\\3\\1\\6\\11\\2\\1\\1\\11\"+\n    \"\\5\\\
+    0\\10\\11\\1\\0\\1\\1\\1\\0\\1\\1\\4\\0\\2\\11\"+\n    \"\\2\\0\\1\\11\";\n\n\
+    \  private static int [] zzUnpackAttribute() {\n    int [] result = new int[45];\n\
+    \    int offset = 0;\n    offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset,\
+    \ result);\n    return result;\n  }\n\n  private static int zzUnpackAttribute(String\
+    \ packed, int offset, int [] result) {\n    int i = 0;       /* index in packed\
+    \ string  */\n    int j = offset;  /* index in unpacked array */\n    int l =\
+    \ packed.length();\n    while (i < l) {\n      int count = packed.charAt(i++);\n\
+    \      int value = packed.charAt(i++);\n      do result[j++] = value; while (--count\
+    \ > 0);\n    }\n    return j;\n  }\n\n  /** the input device */\n  private java.io.Reader\
+    \ zzReader;\n\n  /** the current state of the DFA */\n  private int zzState;\n\
+    \n  /** the current lexical state */\n  private int zzLexicalState = YYINITIAL;\n\
+    \n  /** this buffer contains the current text to be matched and is\n      the\
+    \ source of the yytext() string */\n  private char zzBuffer[] = new char[ZZ_BUFFERSIZE];\n\
+    \n  /** the textposition at the last accepting state */\n  private int zzMarkedPos;\n\
+    \n  /** the current text position in the buffer */\n  private int zzCurrentPos;\n\
+    \n  /** startRead marks the beginning of the yytext() string in the buffer */\n\
+    \  private int zzStartRead;\n\n  /** endRead marks the last character in the buffer,\
+    \ that has been read\n      from input */\n  private int zzEndRead;\n\n  /** number\
+    \ of newlines encountered up to the start of the matched text */\n  private int\
+    \ yyline;\n\n  /** the number of characters up to the start of the matched text\
+    \ */\n  private int yychar;\n\n  /**\n   * the number of characters from the last\
+    \ newline up to the start of the \n   * matched text\n   */\n  private int yycolumn;\n\
+    \n  /** \n   * zzAtBOL == true <=> the scanner is currently at the beginning of\
+    \ a line\n   */\n  private boolean zzAtBOL = true;\n\n  /** zzAtEOF == true <=>\
+    \ the scanner is at the EOF */\n  private boolean zzAtEOF;\n\n  /** denotes if\
+    \ the user-EOF-code has already been executed */\n  private boolean zzEOFDone;\n\
+    \n  /* user code: */\nprivate StringBuilder sb=new StringBuilder();\n\nint getPosition(){\n\
+    \treturn yychar;\n}\n\n\n\n  /**\n   * Creates a new scanner\n   * There is also\
+    \ a java.io.InputStream version of this constructor.\n   *\n   * @param   in \
+    \ the java.io.Reader to read input from.\n   */\n  Yylex(java.io.Reader in) {\n\
+    \    this.zzReader = in;\n  }\n\n  /**\n   * Creates a new scanner.\n   * There\
+    \ is also java.io.Reader version of this constructor.\n   *\n   * @param   in\
+    \  the java.io.Inputstream to read input from.\n   */\n  Yylex(java.io.InputStream\
+    \ in) {\n    this(new java.io.InputStreamReader(in));\n  }\n\n  /** \n   * Unpacks\
+    \ the compressed character translation table.\n   *\n   * @param packed   the\
+    \ packed character translation table\n   * @return         the unpacked character\
+    \ translation table\n   */\n  private static char [] zzUnpackCMap(String packed)\
+    \ {\n    char [] map = new char[0x10000];\n    int i = 0;  /* index in packed\
+    \ string  */\n    int j = 0;  /* index in unpacked array */\n    while (i < 90)\
+    \ {\n      int  count = packed.charAt(i++);\n      char value = packed.charAt(i++);\n\
+    \      do map[j++] = value; while (--count > 0);\n    }\n    return map;\n  }\n\
+    \n\n  /**\n   * Refills the input buffer.\n   *\n   * @return      <code>false</code>,\
+    \ iff there was new input.\n   * \n   * @exception   java.io.IOException  if any\
+    \ I/O-Error occurs\n   */\n  private boolean zzRefill() throws java.io.IOException\
+    \ {\n\n    /* first: make room (if you can) */\n    if (zzStartRead > 0) {\n \
+    \     System.arraycopy(zzBuffer, zzStartRead,\n                       zzBuffer,\
+    \ 0,\n                       zzEndRead-zzStartRead);\n\n      /* translate stored\
+    \ positions */\n      zzEndRead-= zzStartRead;\n      zzCurrentPos-= zzStartRead;\n\
+    \      zzMarkedPos-= zzStartRead;\n      zzStartRead = 0;\n    }\n\n    /* is\
+    \ the buffer big enough? */\n    if (zzCurrentPos >= zzBuffer.length) {\n    \
+    \  /* if not: blow it up */\n      char newBuffer[] = new char[zzCurrentPos*2];\n\
+    \      System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);\n      zzBuffer\
+    \ = newBuffer;\n    }\n\n    /* finally: fill the buffer with new input */\n \
+    \   int numRead = zzReader.read(zzBuffer, zzEndRead,\n                       \
+    \                     zzBuffer.length-zzEndRead);\n\n    if (numRead > 0) {\n\
+    \      zzEndRead+= numRead;\n      return false;\n    }\n    // unlikely but not\
+    \ impossible: read 0 characters, but not at end of stream    \n    if (numRead\
+    \ == 0) {\n      int c = zzReader.read();\n      if (c == -1) {\n        return\
+    \ true;\n      } else {\n        zzBuffer[zzEndRead++] = (char) c;\n        return\
+    \ false;\n      }     \n    }\n\n\t// numRead < 0\n    return true;\n  }\n\n \
+    \   \n  /**\n   * Closes the input stream.\n   */\n  public final void yyclose()\
+    \ throws java.io.IOException {\n    zzAtEOF = true;            /* indicate end\
+    \ of file */\n    zzEndRead = zzStartRead;  /* invalidate buffer    */\n\n   \
+    \ if (zzReader != null)\n      zzReader.close();\n  }\n\n\n  /**\n   * Resets\
+    \ the scanner to read from a new input stream.\n   * Does not close the old reader.\n\
+    \   *\n   * All internal variables are reset, the old input stream \n   * <b>cannot</b>\
+    \ be reused (internal buffer is discarded and lost).\n   * Lexical state is set\
+    \ to <tt>ZZ_INITIAL</tt>.\n   *\n   * @param reader   the new input stream \n\
+    \   */\n  public final void yyreset(java.io.Reader reader) {\n    zzReader = reader;\n\
+    \    zzAtBOL  = true;\n    zzAtEOF  = false;\n    zzEOFDone = false;\n    zzEndRead\
+    \ = zzStartRead = 0;\n    zzCurrentPos = zzMarkedPos = 0;\n    yyline = yychar\
+    \ = yycolumn = 0;\n    zzLexicalState = YYINITIAL;\n  }\n\n\n  /**\n   * Returns\
+    \ the current lexical state.\n   */\n  public final int yystate() {\n    return\
+    \ zzLexicalState;\n  }\n\n\n  /**\n   * Enters a new lexical state\n   *\n   *\
+    \ @param newState the new lexical state\n   */\n  public final void yybegin(int\
+    \ newState) {\n    zzLexicalState = newState;\n  }\n\n\n  /**\n   * Returns the\
+    \ text matched by the current regular expression.\n   */\n  public final String\
+    \ yytext() {\n    return new String( zzBuffer, zzStartRead, zzMarkedPos-zzStartRead\
+    \ );\n  }\n\n\n  /**\n   * Returns the character at position <tt>pos</tt> from\
+    \ the \n   * matched text. \n   * \n   * It is equivalent to yytext().charAt(pos),\
+    \ but faster\n   *\n   * @param pos the position of the character to fetch. \n\
+    \   *            A value from 0 to yylength()-1.\n   *\n   * @return the character\
+    \ at position pos\n   */\n  public final char yycharat(int pos) {\n    return\
+    \ zzBuffer[zzStartRead+pos];\n  }\n\n\n  /**\n   * Returns the length of the matched\
+    \ text region.\n   */\n  public final int yylength() {\n    return zzMarkedPos-zzStartRead;\n\
+    \  }\n\n\n  /**\n   * Reports an error that occured while scanning.\n   *\n  \
+    \ * In a wellformed scanner (no or only correct usage of \n   * yypushback(int)\
+    \ and a match-all fallback rule) this method \n   * will only be called with things\
+    \ that \"Can't Possibly Happen\".\n   * If this method is called, something is\
+    \ seriously wrong\n   * (e.g. a JFlex bug producing a faulty scanner etc.).\n\
+    \   *\n   * Usual syntax/scanner level error handling should be done\n   * in\
+    \ error fallback rules.\n   *\n   * @param   errorCode  the code of the errormessage\
+    \ to display\n   */\n  private void zzScanError(int errorCode) {\n    String message;\n\
+    \    try {\n      message = ZZ_ERROR_MSG[errorCode];\n    }\n    catch (ArrayIndexOutOfBoundsException\
+    \ e) {\n      message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];\n    }\n\n    throw new\
+    \ Error(message);\n  } \n\n\n  /**\n   * Pushes the specified amount of characters\
+    \ back into the input stream.\n   *\n   * They will be read again by then next\
+    \ call of the scanning method\n   *\n   * @param number  the number of characters\
+    \ to be read again.\n   *                This number must not be greater than\
+    \ yylength()!\n   */\n  public void yypushback(int number)  {\n    if ( number\
+    \ > yylength() )\n      zzScanError(ZZ_PUSHBACK_2BIG);\n\n    zzMarkedPos -= number;\n\
+    \  }\n\n\n  /**\n   * Resumes scanning until the next regular expression is matched,\n\
+    \   * the end of input is encountered or an I/O-Error occurs.\n   *\n   * @return\
+    \      the next token\n   * @exception   java.io.IOException  if any I/O-Error\
+    \ occurs\n   */\n  public Yytoken yylex() throws java.io.IOException, JsonException\
+    \ {\n    int zzInput;\n    int zzAction;\n\n    // cached fields:\n    int zzCurrentPosL;\n\
+    \    int zzMarkedPosL;\n    int zzEndReadL = zzEndRead;\n    char [] zzBufferL\
+    \ = zzBuffer;\n    char [] zzCMapL = ZZ_CMAP;\n\n    int [] zzTransL = ZZ_TRANS;\n\
+    \    int [] zzRowMapL = ZZ_ROWMAP;\n    int [] zzAttrL = ZZ_ATTRIBUTE;\n\n   \
+    \ while (true) {\n      zzMarkedPosL = zzMarkedPos;\n\n      yychar+= zzMarkedPosL-zzStartRead;\n\
+    \n      zzAction = -1;\n\n      zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;\n\
+    \  \n      zzState = ZZ_LEXSTATE[zzLexicalState];\n\n\n      zzForAction: {\n\
+    \        while (true) {\n    \n          if (zzCurrentPosL < zzEndReadL)\n   \
+    \         zzInput = zzBufferL[zzCurrentPosL++];\n          else if (zzAtEOF) {\n\
+    \            zzInput = YYEOF;\n            break zzForAction;\n          }\n \
+    \         else {\n            // store back cached positions\n            zzCurrentPos\
+    \  = zzCurrentPosL;\n            zzMarkedPos   = zzMarkedPosL;\n            boolean\
+    \ eof = zzRefill();\n            // get translated positions and possibly new\
+    \ buffer\n            zzCurrentPosL  = zzCurrentPos;\n            zzMarkedPosL\
+    \   = zzMarkedPos;\n            zzBufferL      = zzBuffer;\n            zzEndReadL\
+    \     = zzEndRead;\n            if (eof) {\n              zzInput = YYEOF;\n \
+    \             break zzForAction;\n            }\n            else {\n        \
+    \      zzInput = zzBufferL[zzCurrentPosL++];\n            }\n          }\n   \
+    \       int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];\n    \
+    \      if (zzNext == -1) break zzForAction;\n          zzState = zzNext;\n\n \
+    \         int zzAttributes = zzAttrL[zzState];\n          if ( (zzAttributes &\
+    \ 1) == 1 ) {\n            zzAction = zzState;\n            zzMarkedPosL = zzCurrentPosL;\n\
+    \            if ( (zzAttributes & 8) == 8 ) break zzForAction;\n          }\n\n\
+    \        }\n      }\n\n      // store back cached position\n      zzMarkedPos\
+    \ = zzMarkedPosL;\n\n      switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction])\
+    \ {\n        case 1: \n          { throw new JsonException(yychar, JsonException.Problems.UNEXPECTED_CHARACTER,\
+    \ new Character(yycharat(0)));\n          }\n        case 24: break;\n       \
+    \ case 4: \n          { sb = null; sb = new StringBuilder(); yybegin(STRING_BEGIN);\n\
+    \          }\n        case 25: break;\n        case 11: \n          { sb.append(yytext());\n\
+    \          }\n        case 26: break;\n        case 5: \n          { return new\
+    \ Yytoken(Yytoken.Types.LEFT_BRACE, null);\n          }\n        case 27: break;\n\
+    \        case 16: \n          { sb.append('\\b');\n          }\n        case 28:\
+    \ break;\n        case 22: \n          { Boolean val=Boolean.valueOf(yytext());\
+    \ return new Yytoken(Yytoken.Types.DATUM, val);\n          }\n        case 29:\
+    \ break;\n        case 12: \n          { sb.append('\\\\');\n          }\n   \
+    \     case 30: break;\n        case 10: \n          { return new Yytoken(Yytoken.Types.COLON,\
+    \ null);\n          }\n        case 31: break;\n        case 9: \n          {\
+    \ return new Yytoken(Yytoken.Types.COMMA, null);\n          }\n        case 32:\
+    \ break;\n        case 21: \n          { return new Yytoken(Yytoken.Types.DATUM,\
+    \ null);\n          }\n        case 33: break;\n        case 19: \n          {\
+    \ sb.append('\\r');\n          }\n        case 34: break;\n        case 15: \n\
+    \          { sb.append('/');\n          }\n        case 35: break;\n        case\
+    \ 2: \n          { java.math.BigDecimal val= new java.math.BigDecimal(yytext());\
+    \ return new Yytoken(Yytoken.Types.DATUM, val);\n          }\n        case 36:\
+    \ break;\n        case 14: \n          { sb.append('\"');\n          }\n     \
+    \   case 37: break;\n        case 8: \n          { return new Yytoken(Yytoken.Types.RIGHT_SQUARE,\
+    \ null);\n          }\n        case 38: break;\n        case 23: \n          {\
+    \ try{\n\t\t\tint ch=Integer.parseInt(yytext().substring(2),16);\n\t\t\tsb.append((char)ch);\n\
+    \t\t}catch(Exception e){\n\t\t\t/* The lexer is broken if it can build a 4 byte\
+    \ character code and fail to append the character. */\n\t\t\tthrow new JsonException(yychar,\
+    \ JsonException.Problems.UNEXPECTED_EXCEPTION, e);\n\t\t}\n          }\n     \
+    \   case 39: break;\n        case 17: \n          { sb.append('\\f');\n      \
+    \    }\n        case 40: break;\n        case 6: \n          { return new Yytoken(Yytoken.Types.RIGHT_BRACE,\
+    \ null);\n          }\n        case 41: break;\n        case 20: \n          {\
+    \ sb.append('\\t');\n          }\n        case 42: break;\n        case 7: \n\
+    \          { return new Yytoken(Yytoken.Types.LEFT_SQUARE, null);\n          }\n\
+    \        case 43: break;\n        case 18: \n          { sb.append('\\n');\n \
+    \         }\n        case 44: break;\n        case 13: \n          { yybegin(YYINITIAL);return\
+    \ new Yytoken(Yytoken.Types.DATUM, sb.toString());\n          }\n        case\
+    \ 45: break;\n        case 3: \n          { \n          }\n        case 46: break;\n\
+    \        default: \n          if (zzInput == YYEOF && zzStartRead == zzCurrentPos)\
+    \ {\n            zzAtEOF = true;\n            return null;\n          } \n   \
+    \       else {\n            zzScanError(ZZ_NO_MATCH);\n          }\n      }\n\
+    \    }\n  }\n\n\n}\n"
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/Jsoner.java
+  visible: true
+  text: "/* Copyright 2016 Clifton Labs\n * Licensed under the Apache License, Version\
+    \ 2.0 (the \"License\");\n * you may not use this file except in compliance with\
+    \ the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage com.github.cliftonlabs.json_simple;\n\nimport java.io.IOException;\n\
+    import java.io.Reader;\nimport java.io.StringReader;\nimport java.io.StringWriter;\n\
+    import java.io.Writer;\nimport java.util.Collection;\nimport java.util.EnumSet;\n\
+    import java.util.Iterator;\nimport java.util.LinkedList;\nimport java.util.Map;\n\
+    import java.util.Set;\n\n/** Jsoner provides JSON utilities for escaping strings\
+    \ to be JSON compatible, thread safe parsing (RFC 7159) JSON\n * strings, and\
+    \ thread safe serializing data to strings in JSON format.\n * @since 2.0.0 */\n\
+    public class Jsoner{\n\t/** Flags to tweak the behavior of the primary deserialization\
+    \ method. */\n\tprivate static enum DeserializationOptions{\n\t\t/** Whether multiple\
+    \ JSON values can be deserialized as a root element. */\n\t\tALLOW_CONCATENATED_JSON_VALUES,\n\
+    \t\t/** Whether a JsonArray can be deserialized as a root element. */\n\t\tALLOW_JSON_ARRAYS,\n\
+    \t\t/** Whether a boolean, null, Number, or String can be deserialized as a root\
+    \ element. */\n\t\tALLOW_JSON_DATA,\n\t\t/** Whether a JsonObject can be deserialized\
+    \ as a root element. */\n\t\tALLOW_JSON_OBJECTS;\n\t}\n\n\t/** Flags to tweak\
+    \ the behavior of the primary serialization method. */\n\tprivate static enum\
+    \ SerializationOptions{\n\t\t/** Instead of aborting serialization on non-JSON\
+    \ values it will continue serialization by serializing the\n\t\t * non-JSON value\
+    \ directly into the now invalid JSON. Be mindful that invalid JSON will not successfully\n\
+    \t\t * deserialize. */\n\t\tALLOW_INVALIDS,\n\t\t/** Instead of aborting serialization\
+    \ on non-JSON values that implement Jsonable it will continue serialization\n\t\
+    \t * by deferring serialization to the Jsonable.\n\t\t * @see Jsonable */\n\t\t\
+    ALLOW_JSONABLES;\n\t}\n\n\t/** The possible States of a JSON deserializer. */\n\
+    \tprivate static enum States{\n\t\t/** Post-parsing state. */\n\t\tDONE,\n\t\t\
+    /** Pre-parsing state. */\n\t\tINITIAL,\n\t\t/** Parsing error, ParsingException\
+    \ should be thrown. */\n\t\tPARSED_ERROR,\n\t\t@SuppressWarnings(\"javadoc\")\n\
+    \t\tPARSING_ARRAY,\n\t\t/** Parsing a key-value pair inside of an object. */\n\
+    \t\tPARSING_ENTRY,\n\t\t@SuppressWarnings(\"javadoc\")\n\t\tPARSING_OBJECT;\n\t\
+    }\n\n\t@SuppressWarnings(\"javadoc\")\n\tprivate Jsoner(){\n\t\t/* Jsoner is purely\
+    \ static so instantiation is unnecessary. */\n\t}\n\n\t/** Deserializes a readable\
+    \ stream according to the RFC 7159 JSON specification.\n\t * @param readableDeserializable\
+    \ representing content to be deserialized as JSON.\n\t * @return either a boolean,\
+    \ null, Number, String, JsonObject, or JsonArray that best represents the deserializable.\n\
+    \t * @throws JsonException if an unexpected token is encountered in the deserializable.\
+    \ To recover from a\n\t *         JsonException: fix the deserializable to no\
+    \ longer have an unexpected token and try again. */\n\tpublic static Object deserialize(final\
+    \ Reader readableDeserializable) throws JsonException{\n\t\treturn Jsoner.deserialize(readableDeserializable,\
+    \ EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS, DeserializationOptions.ALLOW_JSON_OBJECTS,\
+    \ DeserializationOptions.ALLOW_JSON_DATA)).get(0);\n\t}\n\n\t/** Deserialize a\
+    \ stream with all deserialized JSON values are wrapped in a JsonArray.\n\t * @param\
+    \ deserializable representing content to be deserialized as JSON.\n\t * @param\
+    \ flags representing the allowances and restrictions on deserialization.\n\t *\
+    \ @return the allowable object best represented by the deserializable.\n\t * @throws\
+    \ JsonException if a disallowed or unexpected token is encountered in the deserializable.\
+    \ To recover from a\n\t *         JsonException: fix the deserializable to no\
+    \ longer have a disallowed or unexpected token and try\n\t *         again. */\n\
+    \tprivate static JsonArray deserialize(final Reader deserializable, final Set<DeserializationOptions>\
+    \ flags) throws JsonException{\n\t\tfinal Yylex lexer = new Yylex(deserializable);\n\
+    \t\tYytoken token;\n\t\tStates currentState;\n\t\tint returnCount = 1;\n\t\tfinal\
+    \ LinkedList<States> stateStack = new LinkedList<>();\n\t\tfinal LinkedList<Object>\
+    \ valueStack = new LinkedList<>();\n\t\tstateStack.addLast(States.INITIAL);\n\t\
+    \tdo{\n\t\t\t/* Parse through the parsable string's tokens. */\n\t\t\tcurrentState\
+    \ = Jsoner.popNextState(stateStack);\n\t\t\ttoken = Jsoner.lexNextToken(lexer);\n\
+    \t\t\tswitch(currentState){\n\t\t\t\tcase DONE:\n\t\t\t\t\t/* The parse has finished\
+    \ a JSON value. */\n\t\t\t\t\tif(!flags.contains(DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES)\
+    \ || Yytoken.Types.END.equals(token.getType())){\n\t\t\t\t\t\t/* Break if concatenated\
+    \ values are not allowed or if an END token is read. */\n\t\t\t\t\t\tbreak;\n\t\
+    \t\t\t\t}\n\t\t\t\t\t/* Increment the amount of returned JSON values and treat\
+    \ the token as if it were a fresh parse. */\n\t\t\t\t\treturnCount += 1;\n\t\t\
+    \t\t\t/* Fall through to the case for the initial state. */\n\t\t\t\t\t//$FALL-THROUGH$\n\
+    \t\t\t\tcase INITIAL:\n\t\t\t\t\t/* The parse has just started. */\n\t\t\t\t\t\
+    switch(token.getType()){\n\t\t\t\t\t\tcase DATUM:\n\t\t\t\t\t\t\t/* A boolean,\
+    \ null, Number, or String could be detected. */\n\t\t\t\t\t\t\tif(flags.contains(DeserializationOptions.ALLOW_JSON_DATA)){\n\
+    \t\t\t\t\t\t\t\tvalueStack.addLast(token.getValue());\n\t\t\t\t\t\t\t\tstateStack.addLast(States.DONE);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.DISALLOWED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tcase LEFT_BRACE:\n\t\t\t\t\t\t\t/* An object is detected.\
+    \ */\n\t\t\t\t\t\t\tif(flags.contains(DeserializationOptions.ALLOW_JSON_OBJECTS)){\n\
+    \t\t\t\t\t\t\t\tvalueStack.addLast(new JsonObject());\n\t\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_OBJECT);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.DISALLOWED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tcase LEFT_SQUARE:\n\t\t\t\t\t\t\t/* An array is detected.\
+    \ */\n\t\t\t\t\t\t\tif(flags.contains(DeserializationOptions.ALLOW_JSON_ARRAYS)){\n\
+    \t\t\t\t\t\t\t\tvalueStack.addLast(new JsonArray());\n\t\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ARRAY);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.DISALLOWED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/* Neither a JSON array or object\
+    \ was detected. */\n\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\
+    \t\t\t\tcase PARSED_ERROR:\n\t\t\t\t\t/* The parse could be in this state due\
+    \ to the state stack not having a state to pop off. */\n\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\tcase PARSING_ARRAY:\n\
+    \t\t\t\t\tswitch(token.getType()){\n\t\t\t\t\t\tcase COMMA:\n\t\t\t\t\t\t\t/*\
+    \ The parse could detect a comma while parsing an array since it separates each\
+    \ element. */\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\t\
+    break;\n\t\t\t\t\t\tcase DATUM:\n\t\t\t\t\t\t\t/* The parse found an element of\
+    \ the array. */\n\t\t\t\t\t\t\tJsonArray val = (JsonArray)valueStack.getLast();\n\
+    \t\t\t\t\t\t\tval.add(token.getValue());\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\
+    \t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase LEFT_BRACE:\n\t\t\t\t\t\t\t/* The parse\
+    \ found an object in the array. */\n\t\t\t\t\t\t\tval = (JsonArray)valueStack.getLast();\n\
+    \t\t\t\t\t\t\tfinal JsonObject object = new JsonObject();\n\t\t\t\t\t\t\tval.add(object);\n\
+    \t\t\t\t\t\t\tvalueStack.addLast(object);\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\
+    \t\t\t\t\t\t\tstateStack.addLast(States.PARSING_OBJECT);\n\t\t\t\t\t\t\tbreak;\n\
+    \t\t\t\t\t\tcase LEFT_SQUARE:\n\t\t\t\t\t\t\t/* The parse found another array\
+    \ in the array. */\n\t\t\t\t\t\t\tval = (JsonArray)valueStack.getLast();\n\t\t\
+    \t\t\t\t\tfinal JsonArray array = new JsonArray();\n\t\t\t\t\t\t\tval.add(array);\n\
+    \t\t\t\t\t\t\tvalueStack.addLast(array);\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\
+    \t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ARRAY);\n\t\t\t\t\t\t\tbreak;\n\
+    \t\t\t\t\t\tcase RIGHT_SQUARE:\n\t\t\t\t\t\t\t/* The parse found the end of the\
+    \ array. */\n\t\t\t\t\t\t\tif(valueStack.size() > returnCount){\n\t\t\t\t\t\t\t\
+    \tvalueStack.removeLast();\n\t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\t/* The parse\
+    \ has been fully resolved. */\n\t\t\t\t\t\t\t\tstateStack.addLast(States.DONE);\n\
+    \t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/*\
+    \ Any other token is invalid in an array. */\n\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\
+    \t\t\t\tcase PARSING_OBJECT:\n\t\t\t\t\t/* The parse has detected the start of\
+    \ an object. */\n\t\t\t\t\tswitch(token.getType()){\n\t\t\t\t\t\tcase COMMA:\n\
+    \t\t\t\t\t\t\t/* The parse could detect a comma while parsing an object since\
+    \ it separates each key value\n\t\t\t\t\t\t\t * pair. Continue parsing the object.\
+    \ */\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\tbreak;\n\t\
+    \t\t\t\t\tcase DATUM:\n\t\t\t\t\t\t\t/* The token ought to be a key. */\n\t\t\t\
+    \t\t\t\tif(token.getValue() instanceof String){\n\t\t\t\t\t\t\t\t/* JSON keys\
+    \ are always strings, strings are not always JSON keys but it is going to be\n\
+    \t\t\t\t\t\t\t\t * treated as one. Continue parsing the object. */\n\t\t\t\t\t\
+    \t\t\tfinal String key = (String)token.getValue();\n\t\t\t\t\t\t\t\tvalueStack.addLast(key);\n\
+    \t\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ENTRY);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\t/* Abort! JSON keys are always strings and\
+    \ it wasn't a string. */\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tcase RIGHT_BRACE:\n\t\t\t\t\t\t\t/* The parse has found\
+    \ the end of the object. */\n\t\t\t\t\t\t\tif(valueStack.size() > returnCount){\n\
+    \t\t\t\t\t\t\t\t/* There are unresolved values remaining. */\n\t\t\t\t\t\t\t\t\
+    valueStack.removeLast();\n\t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\t/* The parse has\
+    \ been fully resolved. */\n\t\t\t\t\t\t\t\tstateStack.addLast(States.DONE);\n\t\
+    \t\t\t\t\t\t}\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/* The\
+    \ parse didn't detect the end of an object or a key. */\n\t\t\t\t\t\t\tthrow new\
+    \ JsonException(lexer.getPosition(), JsonException.Problems.UNEXPECTED_TOKEN,\
+    \ token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\t\tcase PARSING_ENTRY:\n\t\t\t\t\
+    \tswitch(token.getType()){\n\t\t\t\t\t\t/* Parsed pair keys can only happen while\
+    \ parsing objects. */\n\t\t\t\t\t\tcase COLON:\n\t\t\t\t\t\t\t/* The parse could\
+    \ detect a colon while parsing a key value pair since it separates the key\n\t\
+    \t\t\t\t\t\t * and value from each other. Continue parsing the entry. */\n\t\t\
+    \t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\
+    case DATUM:\n\t\t\t\t\t\t\t/* The parse has found a value for the parsed pair\
+    \ key. */\n\t\t\t\t\t\t\tString key = (String)valueStack.removeLast();\n\t\t\t\
+    \t\t\t\tJsonObject parent = (JsonObject)valueStack.getLast();\n\t\t\t\t\t\t\t\
+    parent.put(key, token.getValue());\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase LEFT_BRACE:\n\
+    \t\t\t\t\t\t\t/* The parse has found an object for the parsed pair key. */\n\t\
+    \t\t\t\t\t\tkey = (String)valueStack.removeLast();\n\t\t\t\t\t\t\tparent = (JsonObject)valueStack.getLast();\n\
+    \t\t\t\t\t\t\tfinal JsonObject object = new JsonObject();\n\t\t\t\t\t\t\tparent.put(key,\
+    \ object);\n\t\t\t\t\t\t\tvalueStack.addLast(object);\n\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_OBJECT);\n\
+    \t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase LEFT_SQUARE:\n\t\t\t\t\t\t\t/* The parse\
+    \ has found an array for the parsed pair key. */\n\t\t\t\t\t\t\tkey = (String)valueStack.removeLast();\n\
+    \t\t\t\t\t\t\tparent = (JsonObject)valueStack.getLast();\n\t\t\t\t\t\t\tfinal\
+    \ JsonArray array = new JsonArray();\n\t\t\t\t\t\t\tparent.put(key, array);\n\t\
+    \t\t\t\t\t\tvalueStack.addLast(array);\n\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ARRAY);\n\
+    \t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/* The parse didn't\
+    \ find anything for the parsed pair key. */\n\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\
+    \t\t\t\tdefault:\n\t\t\t\t\tbreak;\n\t\t\t}\n\t\t\t/* If we're not at the END\
+    \ and DONE then do the above again. */\n\t\t}while(!(States.DONE.equals(currentState)\
+    \ && Yytoken.Types.END.equals(token.getType())));\n\t\treturn new JsonArray(valueStack);\n\
+    \t}\n\n\t/** A convenience method that assumes a StringReader to deserialize a\
+    \ string.\n\t * @param deserializable representing content to be deserialized\
+    \ as JSON.\n\t * @return either a boolean, null, Number, String, JsonObject, or\
+    \ JsonArray that best represents the deserializable.\n\t * @throws JsonException\
+    \ if an unexpected token is encountered in the deserializable. To recover from\
+    \ a\n\t *         JsonException: fix the deserializable to no longer have an unexpected\
+    \ token and try again.\n\t * @see Jsoner#deserialize(Reader)\n\t * @see StringReader\
+    \ */\n\tpublic static Object deserialize(final String deserializable) throws JsonException{\n\
+    \t\tObject returnable;\n\t\tStringReader readableDeserializable = null;\n\t\t\
+    try{\n\t\t\treadableDeserializable = new StringReader(deserializable);\n\t\t\t\
+    returnable = Jsoner.deserialize(readableDeserializable);\n\t\t}catch(final NullPointerException\
+    \ caught){\n\t\t\t/* They both have the same recovery scenario.\n\t\t\t * See\
+    \ StringReader.\n\t\t\t * If deserializable is null, it should be reasonable to\
+    \ expect null back. */\n\t\t\treturnable = null;\n\t\t}finally{\n\t\t\tif(readableDeserializable\
+    \ != null){\n\t\t\t\treadableDeserializable.close();\n\t\t\t}\n\t\t}\n\t\treturn\
+    \ returnable;\n\t}\n\n\t/** A convenience method that assumes a JsonArray must\
+    \ be deserialized.\n\t * @param deserializable representing content to be deserializable\
+    \ as a JsonArray.\n\t * @param defaultValue representing what would be returned\
+    \ if deserializable isn't a JsonArray or an IOException,\n\t *        NullPointerException,\
+    \ or JsonException occurs during deserialization.\n\t * @return a JsonArray that\
+    \ represents the deserializable, or the defaultValue if there isn't a JsonArray\
+    \ that\n\t *         represents deserializable.\n\t * @see Jsoner#deserialize(Reader)\
+    \ */\n\tpublic static JsonArray deserialize(final String deserializable, final\
+    \ JsonArray defaultValue){\n\t\tStringReader readable = null;\n\t\tJsonArray returnable;\n\
+    \t\ttry{\n\t\t\treadable = new StringReader(deserializable);\n\t\t\treturnable\
+    \ = Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS)).<JsonArray>\
+    \ getCollection(0);\n\t\t}catch(NullPointerException | JsonException caught){\n\
+    \t\t\t/* Don't care, just return the default value. */\n\t\t\treturnable = defaultValue;\n\
+    \t\t}finally{\n\t\t\tif(readable != null){\n\t\t\t\treadable.close();\n\t\t\t\
+    }\n\t\t}\n\t\treturn returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ a JsonObject must be deserialized.\n\t * @param deserializable representing\
+    \ content to be deserializable as a JsonObject.\n\t * @param defaultValue representing\
+    \ what would be returned if deserializable isn't a JsonObject or an IOException,\n\
+    \t *        NullPointerException, or JsonException occurs during deserialization.\n\
+    \t * @return a JsonObject that represents the deserializable, or the defaultValue\
+    \ if there isn't a JsonObject that\n\t *         represents deserializable.\n\t\
+    \ * @see Jsoner#deserialize(Reader) */\n\tpublic static JsonObject deserialize(final\
+    \ String deserializable, final JsonObject defaultValue){\n\t\tStringReader readable\
+    \ = null;\n\t\tJsonObject returnable;\n\t\ttry{\n\t\t\treadable = new StringReader(deserializable);\n\
+    \t\t\treturnable = Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_OBJECTS)).<JsonObject>\
+    \ getMap(0);\n\t\t}catch(NullPointerException | JsonException caught){\n\t\t\t\
+    /* Don't care, just return the default value. */\n\t\t\treturnable = defaultValue;\n\
+    \t\t}finally{\n\t\t\tif(readable != null){\n\t\t\t\treadable.close();\n\t\t\t\
+    }\n\t\t}\n\t\treturn returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ multiple RFC 7159 JSON values (except numbers) have been concatenated together\n\
+    \t * for deserilization which will be collectively returned in a JsonArray wrapper.\n\
+    \t * There may be numbers included, they just must not be concatenated together\
+    \ as it is prone to\n\t * NumberFormatExceptions (thus causing a JsonException)\
+    \ or the numbers no longer represent their\n\t * respective values.\n\t * Examples:\n\
+    \t * \"123null321\" returns [123, null, 321]\n\t * \"nullnullnulltruefalse\\\"\
+    \\\"{}[]\" returns [null, null, null, true, false, \"\", {}, []]\n\t * \"123\"\
+    \ appended to \"321\" returns [123321]\n\t * \"12.3\" appended to \"3.21\" throws\
+    \ JsonException(NumberFormatException)\n\t * \"123\" appended to \"-321\" throws\
+    \ JsonException(NumberFormatException)\n\t * \"123e321\" appended to \"-1\" throws\
+    \ JsonException(NumberFormatException)\n\t * \"null12.33.21null\" throws JsonException(NumberFormatException)\n\
+    \t * @param deserializable representing concatenated content to be deserialized\
+    \ as JSON in one reader. Its contents\n\t *        may not contain two numbers\
+    \ concatenated together.\n\t * @return a JsonArray that contains each of the concatenated\
+    \ objects as its elements. Each concatenated element is\n\t *         either a\
+    \ boolean, null, Number, String, JsonArray, or JsonObject that best represents\
+    \ the concatenated\n\t *         content inside deserializable.\n\t * @throws\
+    \ JsonException if an unexpected token is encountered in the deserializable. To\
+    \ recover from a\n\t *         JsonException: fix the deserializable to no longer\
+    \ have an unexpected token and try again. */\n\tpublic static JsonArray deserializeMany(final\
+    \ Reader deserializable) throws JsonException{\n\t\treturn Jsoner.deserialize(deserializable,\
+    \ EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS, DeserializationOptions.ALLOW_JSON_OBJECTS,\
+    \ DeserializationOptions.ALLOW_JSON_DATA, DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES));\n\
+    \t}\n\n\t/** Escapes potentially confusing or important characters in the String\
+    \ provided.\n\t * @param escapable an unescaped string.\n\t * @return an escaped\
+    \ string for usage in JSON; An escaped string is one that has escaped all of the\
+    \ quotes (\"),\n\t *         backslashes (\\), return character (\\r), new line\
+    \ character (\\n), tab character (\\t),\n\t *         backspace character (\\\
+    b), form feed character (\\f) and other control characters [u0000..u001F] or\n\
+    \t *         characters [u007F..u009F], [u2000..u20FF] with a\n\t *         backslash\
+    \ (\\) which itself must be escaped by the backslash in a java string. */\n\t\
+    public static String escape(final String escapable){\n\t\tfinal StringBuilder\
+    \ builder = new StringBuilder();\n\t\tfinal int characters = escapable.length();\n\
+    \t\tfor(int i = 0; i < characters; i++){\n\t\t\tfinal char character = escapable.charAt(i);\n\
+    \t\t\tswitch(character){\n\t\t\t\tcase '\"':\n\t\t\t\t\tbuilder.append(\"\\\\\\\
+    \"\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\\\':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    \\\\\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\b':\n\t\t\t\t\tbuilder.append(\"\\\
+    \\b\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\f':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    f\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\n':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    n\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\r':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    r\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\t':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    t\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '/':\n\t\t\t\t\tbuilder.append(\"\\\\/\"\
+    );\n\t\t\t\t\tbreak;\n\t\t\t\tdefault:\n\t\t\t\t\t/* The many characters that\
+    \ get replaced are benign to software but could be mistaken by people\n\t\t\t\t\
+    \t * reading it for a JSON relevant character. */\n\t\t\t\t\tif(((character >=\
+    \ '\\u0000') && (character <= '\\u001F')) || ((character >= '\\u007F') && (character\
+    \ <= '\\u009F')) || ((character >= '\\u2000') && (character <= '\\u20FF'))){\n\
+    \t\t\t\t\t\tfinal String characterHexCode = Integer.toHexString(character);\n\t\
+    \t\t\t\t\tbuilder.append(\"\\\\u\");\n\t\t\t\t\t\tfor(int k = 0; k < (4 - characterHexCode.length());\
+    \ k++){\n\t\t\t\t\t\t\tbuilder.append(\"0\");\n\t\t\t\t\t\t}\n\t\t\t\t\t\tbuilder.append(characterHexCode.toUpperCase());\n\
+    \t\t\t\t\t}else{\n\t\t\t\t\t\t/* Character didn't need escaping. */\n\t\t\t\t\t\
+    \tbuilder.append(character);\n\t\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn builder.toString();\n\
+    \t}\n\n\t/** Processes the lexer's reader for the next token.\n\t * @param lexer\
+    \ represents a text processor being used in the deserialization process.\n\t *\
+    \ @return a token representing a meaningful element encountered by the lexer.\n\
+    \t * @throws JsonException if an unexpected character is encountered while processing\
+    \ the text. */\n\tprivate static Yytoken lexNextToken(final Yylex lexer) throws\
+    \ JsonException{\n\t\tYytoken returnable;\n\t\t/* Parse through the next token.\
+    \ */\n\t\ttry{\n\t\t\treturnable = lexer.yylex();\n\t\t}catch(final IOException\
+    \ caught){\n\t\t\tthrow new JsonException(-1, JsonException.Problems.UNEXPECTED_EXCEPTION,\
+    \ caught);\n\t\t}\n\t\tif(returnable == null){\n\t\t\t/* If there isn't another\
+    \ token, it must be the end. */\n\t\t\treturnable = new Yytoken(Yytoken.Types.END,\
+    \ null);\n\t\t}\n\t\treturn returnable;\n\t}\n\n\t/** Creates a new JsonKey that\
+    \ wraps the given string and value. This function should NOT be\n\t * used in\
+    \ favor of existing constants and enumerations to make code easier to maintain.\n\
+    \t * @param key represents the JsonKey as a String.\n\t * @param value represents\
+    \ the value the JsonKey uses.\n\t * @return a JsonKey that represents the provided\
+    \ key and value. */\n\tpublic static JsonKey mintJsonKey(final String key, final\
+    \ Object value){\n\t\treturn new JsonKey(){\n\t\t\t@Override\n\t\t\tpublic String\
+    \ getKey(){\n\t\t\t\treturn key;\n\t\t\t}\n\n\t\t\t@Override\n\t\t\tpublic Object\
+    \ getValue(){\n\t\t\t\treturn value;\n\t\t\t}\n\t\t};\n\t}\n\n\t/** Used for state\
+    \ transitions while deserializing.\n\t * @param stateStack represents the deserialization\
+    \ states saved for future processing.\n\t * @return a state for deserialization\
+    \ context so it knows how to consume the next token. */\n\tprivate static States\
+    \ popNextState(final LinkedList<States> stateStack){\n\t\tif(stateStack.size()\
+    \ > 0){\n\t\t\treturn stateStack.removeLast();\n\t\t}else{\n\t\t\treturn States.PARSED_ERROR;\n\
+    \t\t}\n\t}\n\n\t/** Makes the JSON input more easily human readable using indentation\
+    \ and newline of the caller's choice. This means\n\t * the validity of the JSON\
+    \ printed by this method is dependent on the caller's choice of indentation and\
+    \ newlines.\n\t * @param readable representing a JSON formatted string with out\
+    \ extraneous characters, like one returned from\n\t *        Jsoner#serialize(Object).\n\
+    \t * @param writable represents where the pretty printed JSON should be written\
+    \ to.\n\t * @param indentation representing the indentation used to format the\
+    \ JSON string. NOT validated as a proper\n\t *        indentation. It is recommended\
+    \ to use tabs (\"\\t\"), but 3, 4, or 8 spaces are common alternatives.\n\t *\
+    \ @param newline representing the newline used to format the JSON string. NOT\
+    \ validated as a proper newline. It is\n\t *        recommended to use \"\\n\"\
+    , but \"\\r\" or \"/r/n\" are common alternatives.\n\t * @throws IOException if\
+    \ the provided writer encounters an IO issue.\n\t * @throws JsonException if the\
+    \ provided reader encounters an IO issue.\n\t * @see Jsoner#prettyPrint(String)\n\
+    \t * @since 3.1.0 made public to allow large JSON inputs and more pretty print\
+    \ control. */\n\tpublic static void prettyPrint(final Reader readable, final Writer\
+    \ writable, final String indentation, final String newline) throws IOException,\
+    \ JsonException{\n\t\tfinal Yylex lexer = new Yylex(readable);\n\t\tYytoken lexed;\n\
+    \t\tint level = 0;\n\t\tdo{\n\t\t\tlexed = Jsoner.lexNextToken(lexer);\n\t\t\t\
+    switch(lexed.getType()){\n\t\t\t\tcase COLON:\n\t\t\t\t\twritable.append(lexed.getValue().toString());\n\
+    \t\t\t\t\tbreak;\n\t\t\t\tcase COMMA:\n\t\t\t\t\twritable.append(lexed.getValue().toString());\n\
+    \t\t\t\t\twritable.append(newline);\n\t\t\t\t\tfor(int i = 0; i < level; i++){\n\
+    \t\t\t\t\t\twritable.append(indentation);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\
+    \t\tcase END:\n\t\t\t\t\tbreak;\n\t\t\t\tcase LEFT_BRACE:\n\t\t\t\tcase LEFT_SQUARE:\n\
+    \t\t\t\t\twritable.append(lexed.getValue().toString());\n\t\t\t\t\twritable.append(newline);\n\
+    \t\t\t\t\tlevel++;\n\t\t\t\t\tfor(int i = 0; i < level; i++){\n\t\t\t\t\t\twritable.append(indentation);\n\
+    \t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\t\tcase RIGHT_BRACE:\n\t\t\t\tcase RIGHT_SQUARE:\n\
+    \t\t\t\t\twritable.append(newline);\n\t\t\t\t\tlevel--;\n\t\t\t\t\tfor(int i =\
+    \ 0; i < level; i++){\n\t\t\t\t\t\twritable.append(indentation);\n\t\t\t\t\t}\n\
+    \t\t\t\t\twritable.append(lexed.getValue().toString());\n\t\t\t\t\tbreak;\n\t\t\
+    \t\tdefault:\n\t\t\t\t\tif(lexed.getValue() == null){\n\t\t\t\t\t\twritable.append(\"\
+    null\");\n\t\t\t\t\t}else if(lexed.getValue() instanceof String){\n\t\t\t\t\t\t\
+    writable.append(\"\\\"\");\n\t\t\t\t\t\twritable.append(Jsoner.escape((String)lexed.getValue()));\n\
+    \t\t\t\t\t\twritable.append(\"\\\"\");\n\t\t\t\t\t}else{\n\t\t\t\t\t\twritable.append(lexed.getValue().toString());\n\
+    \t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\t}\n\t\t}while(!lexed.getType().equals(Yytoken.Types.END));\n\
+    \t\twritable.flush();\n\t}\n\n\t/** A convenience method to pretty print a String\
+    \ with tabs (\"\\t\") and \"\\n\" for newlines.\n\t * @param printable representing\
+    \ a JSON formatted string with out extraneous characters, like one returned from\n\
+    \t *        Jsoner#serialize(Object).\n\t * @return printable except it will have\
+    \ '\\n' then '\\t' characters inserted after '[', '{', ',' and before ']' '}'\n\
+    \t *         tokens in the JSON. It will return null if printable isn't a JSON\
+    \ string. */\n\tpublic static String prettyPrint(final String printable){\n\t\t\
+    final StringWriter writer = new StringWriter();\n\t\ttry{\n\t\t\tJsoner.prettyPrint(new\
+    \ StringReader(printable), writer, \"\\t\", \"\\n\");\n\t\t}catch(final IOException\
+    \ caught){\n\t\t\t/* See java.io.StringReader.\n\t\t\t * See java.io.StringWriter.\
+    \ */\n\t\t}catch(final JsonException caught){\n\t\t\t/* Would have been caused\
+    \ by a an IO exception while lexing, but the StringReader does not throw them.\
+    \ See\n\t\t\t * java.io.StringReader. */\n\t\t}\n\t\treturn writer.toString();\n\
+    \t}\n\n\t/** A convenience method to pretty print a String with the provided spaces\
+    \ count and \"\\n\" for newlines.\n\t * @param printable representing a JSON formatted\
+    \ string with out extraneous characters, like one returned from\n\t *        Jsoner#serialize(Object).\n\
+    \t * @param spaces representing the amount of spaces to use for indentation. Must\
+    \ be between 2 and 10.\n\t * @return printable except it will have '\\n' then\
+    \ space characters inserted after '[', '{', ',' and before ']' '}'\n\t *     \
+    \    tokens in the JSON. It will return null if printable isn't a JSON string.\n\
+    \t * @throws IllegalArgumentException if spaces isn't between [2..10].\n\t * @see\
+    \ Jsoner#prettyPrint(String)\n\t * @since 2.2.0 to allow pretty printing with\
+    \ spaces instead of tabs.\n\t * @deprecated 3.1.0 in favor of Jsoner#prettyPrint(Reader,\
+    \ Writer, String, String) due to arbitrary limitations\n\t *             enforced\
+    \ by this implementation. */\n\t@Deprecated\n\tpublic static String prettyPrint(final\
+    \ String printable, final int spaces){\n\t\tif((spaces > 10) || (spaces < 2)){\n\
+    \t\t\tthrow new IllegalArgumentException(\"Indentation with spaces must be between\
+    \ 2 and 10.\");\n\t\t}\n\t\tfinal StringBuilder indentation = new StringBuilder(\"\
+    \");\n\t\tfinal StringWriter writer = new StringWriter();\n\t\tfor(int i = 0;\
+    \ i < spaces; i++){\n\t\t\tindentation.append(\" \");\n\t\t}\n\t\ttry{\n\t\t\t\
+    Jsoner.prettyPrint(new StringReader(printable), writer, indentation.toString(),\
+    \ \"\\n\");\n\t\t}catch(final IOException caught){\n\t\t\t/* See java.io.StringReader.\n\
+    \t\t\t * See java.io.StringWriter. */\n\t\t}catch(final JsonException caught){\n\
+    \t\t\t/* Would have been caused by a an IO exception while lexing, but the StringReader\
+    \ does not throw them. See\n\t\t\t * java.io.StringReader. */\n\t\t}\n\t\treturn\
+    \ writer.toString();\n\t}\n\n\t/** A convenience method that assumes a StringWriter.\n\
+    \t * @param jsonSerializable represents the object that should be serialized as\
+    \ a string in JSON format.\n\t * @return a string, in JSON format, that represents\
+    \ the object provided.\n\t * @throws IllegalArgumentException if the jsonSerializable\
+    \ isn't serializable in JSON.\n\t * @see Jsoner#serialize(Object, Writer)\n\t\
+    \ * @see StringWriter */\n\tpublic static String serialize(final Object jsonSerializable){\n\
+    \t\tfinal StringWriter writableDestination = new StringWriter();\n\t\ttry{\n\t\
+    \t\tJsoner.serialize(jsonSerializable, writableDestination);\n\t\t}catch(final\
+    \ IOException caught){\n\t\t\t/* See java.io.StringWriter. */\n\t\t}\n\t\treturn\
+    \ writableDestination.toString();\n\t}\n\n\t/** Serializes values according to\
+    \ the RFC 7159 JSON specification. It will also trust the serialization provided\
+    \ by\n\t * any Jsonables it serializes.\n\t * @param jsonSerializable represents\
+    \ the object that should be serialized in JSON format.\n\t * @param writableDestination\
+    \ represents where the resulting JSON text is written to.\n\t * @throws IOException\
+    \ if the writableDestination encounters an I/O problem, like being closed while\
+    \ in use.\n\t * @throws IllegalArgumentException if the jsonSerializable isn't\
+    \ serializable in JSON. */\n\tpublic static void serialize(final Object jsonSerializable,\
+    \ final Writer writableDestination) throws IOException{\n\t\tJsoner.serialize(jsonSerializable,\
+    \ writableDestination, EnumSet.of(SerializationOptions.ALLOW_JSONABLES));\n\t\
+    }\n\n\t/** Serialize values to JSON and write them to the provided writer based\
+    \ on behavior flags.\n\t * @param jsonSerializable represents the object that\
+    \ should be serialized to a string in JSON format.\n\t * @param writableDestination\
+    \ represents where the resulting JSON text is written to.\n\t * @param flags represents\
+    \ the allowances and restrictions on serialization.\n\t * @throws IOException\
+    \ if the writableDestination encounters an I/O problem.\n\t * @throws IllegalArgumentException\
+    \ if the jsonSerializable isn't serializable in JSON.\n\t * @see SerializationOptions\
+    \ */\n\tprivate static void serialize(final Object jsonSerializable, final Writer\
+    \ writableDestination, final Set<SerializationOptions> flags) throws IOException{\n\
+    \t\tif(jsonSerializable == null){\n\t\t\t/* When a null is passed in the word\
+    \ null is supported in JSON. */\n\t\t\twritableDestination.write(\"null\");\n\t\
+    \t}else if(((jsonSerializable instanceof Jsonable) && flags.contains(SerializationOptions.ALLOW_JSONABLES))){\n\
+    \t\t\t/* Writes the writable as defined by the writable. */\n\t\t\twritableDestination.write(((Jsonable)jsonSerializable).toJson());\n\
+    \t\t}else if(jsonSerializable instanceof String){\n\t\t\t/* Make sure the string\
+    \ is properly escaped. */\n\t\t\twritableDestination.write('\"');\n\t\t\twritableDestination.write(Jsoner.escape((String)jsonSerializable));\n\
+    \t\t\twritableDestination.write('\"');\n\t\t}else if(jsonSerializable instanceof\
+    \ Character){\n\t\t\t/* Make sure the string is properly escaped.\n\t\t\t * Quotes\
+    \ for some reason are necessary for String, but not Character. */\n\t\t\twritableDestination.write(Jsoner.escape(jsonSerializable.toString()));\n\
+    \t\t}else if(jsonSerializable instanceof Double){\n\t\t\tif(((Double)jsonSerializable).isInfinite()\
+    \ || ((Double)jsonSerializable).isNaN()){\n\t\t\t\t/* Infinite and not a number\
+    \ are not supported by the JSON specification, so null is used instead. */\n\t\
+    \t\t\twritableDestination.write(\"null\");\n\t\t\t}else{\n\t\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t\t}\n\t\t}else if(jsonSerializable instanceof Float){\n\t\t\tif(((Float)jsonSerializable).isInfinite()\
+    \ || ((Float)jsonSerializable).isNaN()){\n\t\t\t\t/* Infinite and not a number\
+    \ are not supported by the JSON specification, so null is used instead. */\n\t\
+    \t\t\twritableDestination.write(\"null\");\n\t\t\t}else{\n\t\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t\t}\n\t\t}else if(jsonSerializable instanceof Number){\n\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t}else if(jsonSerializable instanceof Boolean){\n\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t}else if(jsonSerializable instanceof Map){\n\t\t\t/* Writes the map in JSON\
+    \ object format. */\n\t\t\tboolean isFirstEntry = true;\n\t\t\t@SuppressWarnings(\"\
+    rawtypes\")\n\t\t\tfinal Iterator entries = ((Map)jsonSerializable).entrySet().iterator();\n\
+    \t\t\twritableDestination.write('{');\n\t\t\twhile(entries.hasNext()){\n\t\t\t\
+    \tif(isFirstEntry){\n\t\t\t\t\tisFirstEntry = false;\n\t\t\t\t}else{\n\t\t\t\t\
+    \twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t\t@SuppressWarnings(\"rawtypes\"\
+    )\n\t\t\t\tfinal Map.Entry entry = (Map.Entry)entries.next();\n\t\t\t\tJsoner.serialize(entry.getKey(),\
+    \ writableDestination, flags);\n\t\t\t\twritableDestination.write(':');\n\t\t\t\
+    \tJsoner.serialize(entry.getValue(), writableDestination, flags);\n\t\t\t}\n\t\
+    \t\twritableDestination.write('}');\n\t\t}else if(jsonSerializable instanceof\
+    \ Collection){\n\t\t\t/* Writes the collection in JSON array format. */\n\t\t\t\
+    boolean isFirstElement = true;\n\t\t\t@SuppressWarnings(\"rawtypes\")\n\t\t\t\
+    final Iterator elements = ((Collection)jsonSerializable).iterator();\n\t\t\twritableDestination.write('[');\n\
+    \t\t\twhile(elements.hasNext()){\n\t\t\t\tif(isFirstElement){\n\t\t\t\t\tisFirstElement\
+    \ = false;\n\t\t\t\t}else{\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t\
+    }\n\t\t\t\tJsoner.serialize(elements.next(), writableDestination, flags);\n\t\t\
+    \t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof\
+    \ byte[]){\n\t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal byte[]\
+    \ writableArray = (byte[])jsonSerializable;\n\t\t\tfinal int numberOfElements\
+    \ = writableArray.length;\n\t\t\twritableDestination.write('[');\n\t\t\tfor(int\
+    \ i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\
+    \t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\t\t\
+    \t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof short[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal short[] writableArray\
+    \ = (short[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write('[');\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\
+    \t\t}\n\t\t\t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable\
+    \ instanceof int[]){\n\t\t\t/* Writes the array in JSON array format. */\n\t\t\
+    \tfinal int[] writableArray = (int[])jsonSerializable;\n\t\t\tfinal int numberOfElements\
+    \ = writableArray.length;\n\t\t\twritableDestination.write('[');\n\t\t\tfor(int\
+    \ i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\
+    \t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\t\t\
+    \t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof long[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal long[] writableArray\
+    \ = (long[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write('[');\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\
+    \t\t}\n\t\t\t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable\
+    \ instanceof float[]){\n\t\t\t/* Writes the array in JSON array format. */\n\t\
+    \t\tfinal float[] writableArray = (float[])jsonSerializable;\n\t\t\tfinal int\
+    \ numberOfElements = writableArray.length;\n\t\t\twritableDestination.write('[');\n\
+    \t\t\tfor(int i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements\
+    \ - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\
+    \t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof double[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal double[] writableArray\
+    \ = (double[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write('[');\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\
+    \t\t}\n\t\t\t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable\
+    \ instanceof boolean[]){\n\t\t\t/* Writes the array in JSON array format. */\n\
+    \t\t\tfinal boolean[] writableArray = (boolean[])jsonSerializable;\n\t\t\tfinal\
+    \ int numberOfElements = writableArray.length;\n\t\t\twritableDestination.write('[');\n\
+    \t\t\tfor(int i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements\
+    \ - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\
+    \t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof char[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal char[] writableArray\
+    \ = (char[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write(\"[\\\"\");\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(\"\\\",\\\"\
+    \");\n\t\t\t\t}\n\t\t\t}\n\t\t\twritableDestination.write(\"\\\"]\");\n\t\t}else\
+    \ if(jsonSerializable instanceof Object[]){\n\t\t\t/* Writes the array in JSON\
+    \ array format. */\n\t\t\tfinal Object[] writableArray = (Object[])jsonSerializable;\n\
+    \t\t\tfinal int numberOfElements = writableArray.length;\n\t\t\twritableDestination.write('[');\n\
+    \t\t\tfor(int i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements\
+    \ - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\
+    \t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(\",\");\n\t\t\t\t}\n\t\t\t}\n\t\
+    \t\twritableDestination.write(']');\n\t\t}else{\n\t\t\t/* It cannot by any measure\
+    \ be safely serialized according to specification. */\n\t\t\tif(flags.contains(SerializationOptions.ALLOW_INVALIDS)){\n\
+    \t\t\t\t/* Can be helpful for debugging how it isn't valid. */\n\t\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t\t}else{\n\t\t\t\t/* Notify the caller the cause of failure for the serialization.\
+    \ */\n\t\t\t\tthrow new IllegalArgumentException(\"Encountered a: \" + jsonSerializable.getClass().getName()\
+    \ + \" as: \" + jsonSerializable.toString() + \"  that isn't JSON serializable.\\\
+    n  Try:\\n    1) Implementing the Jsonable interface for the object to return\
+    \ valid JSON. If it already does it probably has a bug.\\n    2) If you cannot\
+    \ edit the source of the object or couple it with this library consider wrapping\
+    \ it in a class that does implement the Jsonable interface.\\n    3) Otherwise\
+    \ convert it to a boolean, null, number, JsonArray, JsonObject, or String value\
+    \ before serializing it.\\n    4) If you feel it should have serialized you could\
+    \ use a more tolerant serialization for debugging purposes.\");\n\t\t\t}\n\t\t\
+    }\n\t}\n\n\t/** Serializes like the first version of this library.\n\t * It has\
+    \ been adapted to use Jsonable for serializing custom objects, but otherwise works\
+    \ like the old JSON string\n\t * serializer. It will allow non-JSON values in\
+    \ its output like the old one. It can be helpful for last resort log\n\t * statements\
+    \ and debugging errors in self generated JSON. Anything serialized using this\
+    \ method isn't guaranteed to\n\t * be deserializable.\n\t * @param jsonSerializable\
+    \ represents the object that should be serialized in JSON format.\n\t * @param\
+    \ writableDestination represents where the resulting JSON text is written to.\n\
+    \t * @throws IOException if the writableDestination encounters an I/O problem,\
+    \ like being closed while in use. */\n\tpublic static void serializeCarelessly(final\
+    \ Object jsonSerializable, final Writer writableDestination) throws IOException{\n\
+    \t\tJsoner.serialize(jsonSerializable, writableDestination, EnumSet.of(SerializationOptions.ALLOW_JSONABLES,\
+    \ SerializationOptions.ALLOW_INVALIDS));\n\t}\n\n\t/** Serializes JSON values\
+    \ and only JSON values according to the RFC 7159 JSON specification.\n\t * @param\
+    \ jsonSerializable represents the object that should be serialized in JSON format.\n\
+    \t * @param writableDestination represents where the resulting JSON text is written\
+    \ to.\n\t * @throws IOException if the writableDestination encounters an I/O problem,\
+    \ like being closed while in use.\n\t * @throws IllegalArgumentException if the\
+    \ jsonSerializable isn't serializable in raw JSON. */\n\tpublic static void serializeStrictly(final\
+    \ Object jsonSerializable, final Writer writableDestination) throws IOException{\n\
+    \t\tJsoner.serialize(jsonSerializable, writableDestination, EnumSet.noneOf(SerializationOptions.class));\n\
+    \t}\n}\n"
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/JsonKey.java
+  visible: true
+  text: "package com.github.cliftonlabs.json_simple;\n\n/** Represents the key of\
+    \ a JsonObject. Utilizing JsonKeys allows many of the convenience methods that\
+    \ self document\n * your JSON data model and make refactoring easier. It is recommended\
+    \ to implement JsonKeys as an enum.\n * @since 2.3.0 */\npublic interface JsonKey{\n\
+    \t/** The json-simple library uses a String for its keys.\n\t * @return a String\
+    \ representing the JsonKey. */\n\tpublic String getKey();\n\n\t/** A reasonable\
+    \ value for the key; such as a valid default, error value, or null.\n\t * @return\
+    \ an Object representing a reasonable general case value for the key. */\n\tpublic\
+    \ Object getValue();\n}\n"
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/Yytoken.java
+  visible: true
+  text: "/* Copyright 2016 Clifton Labs\n * Licensed under the Apache License, Version\
+    \ 2.0 (the \"License\");\n * you may not use this file except in compliance with\
+    \ the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage com.github.cliftonlabs.json_simple;\n\n/** Represents structural\
+    \ entities in JSON.\n * @since 2.0.0 */\nclass Yytoken{\n\t/** Represents the\
+    \ different kinds of tokens. */\n\tenum Types{\n\t\t/** Tokens of this type will\
+    \ always have a value of \":\" */\n\t\tCOLON,\n\t\t/** Tokens of this type will\
+    \ always have a value of \",\" */\n\t\tCOMMA,\n\t\t/** Tokens of this type will\
+    \ always have a value that is a boolean, null, number, or string. */\n\t\tDATUM,\n\
+    \t\t/** Tokens of this type will always have a value of \"\" */\n\t\tEND,\n\t\t\
+    /** Tokens of this type will always have a value of \"{\" */\n\t\tLEFT_BRACE,\n\
+    \t\t/** Tokens of this type will always have a value of \"[\" */\n\t\tLEFT_SQUARE,\n\
+    \t\t/** Tokens of this type will always have a value of \"}\" */\n\t\tRIGHT_BRACE,\n\
+    \t\t/** Tokens of this type will always have a value of \"]\" */\n\t\tRIGHT_SQUARE;\n\
+    \t}\n\n\t@SuppressWarnings(\"javadoc\")\n\tprivate final Types\t\ttype;\n\t@SuppressWarnings(\"\
+    javadoc\")\n\tprivate final Object\tvalue;\n\n\t/** @param type represents the\
+    \ kind of token the instantiated token will be.\n\t * @param value represents\
+    \ the value the token is associated with, will be ignored unless type is equal\
+    \ to\n\t *        Types.DATUM.\n\t * @see Types */\n\tYytoken(final Types type,\
+    \ final Object value){\n\t\t/* Sanity check. Make sure the value is ignored for\
+    \ the proper value unless it is a datum token. */\n\t\tswitch(type){\n\t\t\tcase\
+    \ COLON:\n\t\t\t\tthis.value = \":\";\n\t\t\t\tbreak;\n\t\t\tcase COMMA:\n\t\t\
+    \t\tthis.value = \",\";\n\t\t\t\tbreak;\n\t\t\tcase END:\n\t\t\t\tthis.value =\
+    \ \"\";\n\t\t\t\tbreak;\n\t\t\tcase LEFT_BRACE:\n\t\t\t\tthis.value = \"{\";\n\
+    \t\t\t\tbreak;\n\t\t\tcase LEFT_SQUARE:\n\t\t\t\tthis.value = \"[\";\n\t\t\t\t\
+    break;\n\t\t\tcase RIGHT_BRACE:\n\t\t\t\tthis.value = \"}\";\n\t\t\t\tbreak;\n\
+    \t\t\tcase RIGHT_SQUARE:\n\t\t\t\tthis.value = \"]\";\n\t\t\t\tbreak;\n\t\t\t\
+    default:\n\t\t\t\tthis.value = value;\n\t\t\t\tbreak;\n\t\t}\n\t\tthis.type =\
+    \ type;\n\t}\n\n\t/** @return which of the {@link Types} the token is.\n\t * @see\
+    \ Types */\n\tTypes getType(){\n\t\treturn this.type;\n\t}\n\n\t/** @return what\
+    \ the token is.\n\t * @see Types */\n\tObject getValue(){\n\t\treturn this.value;\n\
+    \t}\n\n\t@Override\n\tpublic String toString(){\n\t\tfinal StringBuilder sb =\
+    \ new StringBuilder();\n\t\tsb.append(this.type.toString()).append(\"(\").append(this.value).append(\"\
+    )\");\n\t\treturn sb.toString();\n\t}\n}\n"
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/Jsonable.java
+  visible: true
+  text: "/* Copyright 2016 Clifton Labs\n * Licensed under the Apache License, Version\
+    \ 2.0 (the \"License\");\n * you may not use this file except in compliance with\
+    \ the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage com.github.cliftonlabs.json_simple;\n\nimport java.io.IOException;\n\
+    import java.io.Writer;\n\n/** Jsonables can be serialized in java script object\
+    \ notation (JSON). Deserializing a String produced by a Jsonable\n * should represent\
+    \ the Jsonable in JSON form.\n * @since 2.0.0 */\npublic interface Jsonable{\n\
+    \t/** Serialize to a JSON formatted string.\n\t * @return a string, formatted\
+    \ in JSON, that represents the Jsonable. */\n\tpublic String toJson();\n\n\t/**\
+    \ Serialize to a JSON formatted stream.\n\t * @param writable where the resulting\
+    \ JSON text should be sent.\n\t * @throws IOException when the writable encounters\
+    \ an I/O error. */\n\tpublic void toJson(Writer writable) throws IOException;\n\
+    }\n"
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/JsonArray.java
+  visible: true
+  text: "/* Copyright 2016-2017 Clifton Labs\n * Licensed under the Apache License,\
+    \ Version 2.0 (the \"License\");\n * you may not use this file except in compliance\
+    \ with the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage com.github.cliftonlabs.json_simple;\n\nimport java.io.IOException;\n\
+    import java.io.StringWriter;\nimport java.io.Writer;\nimport java.math.BigDecimal;\n\
+    import java.util.ArrayList;\nimport java.util.Collection;\nimport java.util.Iterator;\n\
+    import java.util.Map;\n\n/** JsonArray is a common non-thread safe data format\
+    \ for a collection of data. The contents of a JsonArray are only\n * validated\
+    \ as JSON values on serialization. Meaning all values added to a JsonArray must\
+    \ be recognized by the Jsoner\n * for it to be a true 'JsonArray', so it is really\
+    \ a JsonableArrayList that will serialize to a JsonArray if all of\n * its contents\
+    \ are valid JSON.\n * @see Jsoner\n * @since 2.0.0 */\npublic class JsonArray\
+    \ extends ArrayList<Object> implements Jsonable{\n\t/** The serialization version\
+    \ this class is compatible with. This value doesn't need to be incremented if\
+    \ and only\n\t * if the only changes to occur were updating comments, updating\
+    \ javadocs, adding new fields to the class, changing\n\t * the fields from static\
+    \ to non-static, or changing the fields from transient to non transient. All other\
+    \ changes\n\t * require this number be incremented. */\n\tprivate static final\
+    \ long serialVersionUID = 1L;\n\n\t/** Instantiates an empty JsonArray. */\n\t\
+    public JsonArray(){\n\t\tsuper();\n\t}\n\n\t/** Instantiate a new JsonArray using\
+    \ ArrayList's constructor of the same type.\n\t * @param collection represents\
+    \ the elements to produce the JsonArray with. */\n\tpublic JsonArray(final Collection<?>\
+    \ collection){\n\t\tsuper(collection);\n\t}\n\n\t/** Calls add for the given collection\
+    \ of elements, but returns the JsonArray for chaining calls.\n\t * @param collection\
+    \ represents the items to be appended to the JsonArray.\n\t * @return the JsonArray\
+    \ to allow chaining calls.\n\t * @see ArrayList#addAll(Collection)\n\t * @since\
+    \ 3.1.0 for inline instantiation. */\n\tpublic JsonArray addAllChain(final Collection<?>\
+    \ collection){\n\t\tthis.addAll(collection);\n\t\treturn this;\n\t}\n\n\t/** Calls\
+    \ add for the given index and collection, but returns the JsonArray for chaining\
+    \ calls.\n\t * @param index represents what index the element is added to in the\
+    \ JsonArray.\n\t * @param collection represents the item to be appended to the\
+    \ JsonArray.\n\t * @return the JsonArray to allow chaining calls.\n\t * @see ArrayList#addAll(int,\
+    \ Collection)\n\t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonArray\
+    \ addAllChain(final int index, final Collection<?> collection){\n\t\tthis.addAll(index,\
+    \ collection);\n\t\treturn this;\n\t}\n\n\t/** Calls add for the given element,\
+    \ but returns the JsonArray for chaining calls.\n\t * @param index represents\
+    \ what index the element is added to in the JsonArray.\n\t * @param element represents\
+    \ the item to be appended to the JsonArray.\n\t * @return the JsonArray to allow\
+    \ chaining calls.\n\t * @see ArrayList#add(int, Object)\n\t * @since 3.1.0 for\
+    \ inline instantiation. */\n\tpublic JsonArray addChain(final int index, final\
+    \ Object element){\n\t\tthis.add(index, element);\n\t\treturn this;\n\t}\n\n\t\
+    /** Calls add for the given element, but returns the JsonArray for chaining calls.\n\
+    \t * @param element represents the item to be appended to the JsonArray.\n\t *\
+    \ @return the JsonArray to allow chaining calls.\n\t * @see ArrayList#add(Object)\n\
+    \t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonArray addChain(final\
+    \ Object element){\n\t\tthis.add(element);\n\t\treturn this;\n\t}\n\n\t/** A convenience\
+    \ method that assumes every element of the JsonArray is castable to T before adding\
+    \ it to a\n\t * collection of Ts.\n\t * @param <T> represents the type that all\
+    \ of the elements of the JsonArray should be cast to and the type the\n\t *  \
+    \      collection will contain.\n\t * @param destination represents where all\
+    \ of the elements of the JsonArray are added to after being cast to the\n\t *\
+    \        generic type\n\t *        provided.\n\t * @throws ClassCastException\
+    \ if the unchecked cast of an element to T fails. */\n\t@SuppressWarnings(\"unchecked\"\
+    )\n\tpublic <T> void asCollection(final Collection<T> destination){\n\t\tfor(final\
+    \ Object o : this){\n\t\t\tdestination.add((T)o);\n\t\t}\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a BigDecimal, Number, or String at the given index.\
+    \ If a Number or\n\t * String is there it is used to construct a new BigDecimal.\n\
+    \t * @param index representing where the value is expected to be at.\n\t * @return\
+    \ the value stored at the key or the default provided if the key doesn't exist.\n\
+    \t * @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return types.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @throws NumberFormatException\
+    \ if a String isn't a valid representation of a BigDecimal.\n\t * @see BigDecimal\n\
+    \t * @see Number#doubleValue() */\n\tpublic BigDecimal getBigDecimal(final int\
+    \ index){\n\t\tObject returnable = this.get(index);\n\t\tif(returnable instanceof\
+    \ BigDecimal){\n\t\t\t/* Success there was a BigDecimal. */\n\t\t}else if(returnable\
+    \ instanceof Number){\n\t\t\t/* A number can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal(returnable.toString());\n\t\t}else if(returnable\
+    \ instanceof String){\n\t\t\t/* A number can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ (BigDecimal)returnable;\n\t}\n\n\t/** A convenience method that assumes there\
+    \ is a Boolean or String value at the given index.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a boolean.\n\t * @throws ClassCastException if there was a value but\
+    \ didn't match the assumed return type.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray. */\n\
+    \tpublic Boolean getBoolean(final int index){\n\t\tObject returnable = this.get(index);\n\
+    \t\tif(returnable instanceof String){\n\t\t\treturnable = Boolean.valueOf((String)returnable);\n\
+    \t\t}\n\t\treturn (Boolean)returnable;\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a Number or String value at the given index.\n\t * @param index\
+    \ represents where the value is expected to be at.\n\t * @return the value at\
+    \ the index provided cast to a byte.\n\t * @throws ClassCastException if there\
+    \ was a value but didn't match the assumed return type.\n\t * @throws NumberFormatException\
+    \ if a String isn't a valid representation of a BigDecimal or if the Number\n\t\
+    \ *         represents the double or float Infinity or NaN.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray.\n\t\
+    \ * @see Number */\n\tpublic Byte getByte(final int index){\n\t\tObject returnable\
+    \ = this.get(index);\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\
+    \t\tif(returnable instanceof String){\n\t\t\t/* A String can be used to construct\
+    \ a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\
+    \t}\n\t\treturn ((Number)returnable).byteValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Collection value at the given index.\n\t * @param\
+    \ <T> the kind of collection to expect at the index. Note unless manually added,\
+    \ collection values will be a\n\t *        JsonArray.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a Collection.\n\t * @throws ClassCastException if there was a value\
+    \ but didn't match the assumed return type.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray.\n\t\
+    \ * @see Collection */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic <T extends\
+    \ Collection<?>> T getCollection(final int index){\n\t\t/* The unchecked warning\
+    \ is suppressed because there is no way of guaranteeing at compile time the cast\
+    \ will\n\t\t * work. */\n\t\treturn (T)this.get(index);\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given index.\n\t\
+    \ * @param index represents where the value is expected to be at.\n\t * @return\
+    \ the value at the index provided cast to a double.\n\t * @throws ClassCastException\
+    \ if there was a value but didn't match the assumed return type.\n\t * @throws\
+    \ NumberFormatException if a String isn't a valid representation of a BigDecimal\
+    \ or if the Number\n\t *         represents the double or float Infinity or NaN.\n\
+    \t * @throws IndexOutOfBoundsException if the index is outside of the range of\
+    \ element indexes in the JsonArray.\n\t * @see Number */\n\tpublic Double getDouble(final\
+    \ int index){\n\t\tObject returnable = this.get(index);\n\t\tif(returnable ==\
+    \ null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\
+    \t\t/* A String can be used to construct a BigDecimal. */\n\t\t\treturnable =\
+    \ new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).doubleValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given index.\n\t * @param index represents where the value is expected\
+    \ to be at.\n\t * @return the value at the index provided cast to a float.\n\t\
+    \ * @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return type.\n\t * @throws NumberFormatException if a String isn't a valid representation\
+    \ of a BigDecimal or if the Number\n\t *         represents the double or float\
+    \ Infinity or NaN.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @see Number */\n\tpublic\
+    \ Float getFloat(final int index){\n\t\tObject returnable = this.get(index);\n\
+    \t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\t\
+    returnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).floatValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given index.\n\t * @param index represents where the value is expected\
+    \ to be at.\n\t * @return the value at the index provided cast to a int.\n\t *\
+    \ @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return type.\n\t * @throws NumberFormatException if a String isn't a valid representation\
+    \ of a BigDecimal or if the Number\n\t *         represents the double or float\
+    \ Infinity or NaN.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @see Number */\n\tpublic\
+    \ Integer getInteger(final int index){\n\t\tObject returnable = this.get(index);\n\
+    \t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\t\
+    returnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).intValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given index.\n\t * @param index represents where the value is expected\
+    \ to be at.\n\t * @return the value at the index provided cast to a long.\n\t\
+    \ * @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return type.\n\t * @throws NumberFormatException if a String isn't a valid representation\
+    \ of a BigDecimal or if the Number\n\t *         represents the double or float\
+    \ Infinity or NaN.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @see Number */\n\tpublic\
+    \ Long getLong(final int index){\n\t\tObject returnable = this.get(index);\n\t\
+    \tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\t\
+    returnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).longValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Map value at the given\
+    \ index.\n\t * @param <T> the kind of map to expect at the index. Note unless\
+    \ manually added, Map values will be a JsonObject.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a Map.\n\t * @throws ClassCastException if there was a value but didn't\
+    \ match the assumed return type.\n\t * @throws IndexOutOfBoundsException if the\
+    \ index is outside of the range of element indexes in the JsonArray.\n\t * @see\
+    \ Map */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic <T extends Map<?, ?>> T\
+    \ getMap(final int index){\n\t\t/* The unchecked warning is suppressed because\
+    \ there is no way of guaranteeing at compile time the cast will\n\t\t * work.\
+    \ */\n\t\treturn (T)this.get(index);\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given index.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a short.\n\t * @throws ClassCastException if there was a value but didn't\
+    \ match the assumed return type.\n\t * @throws NumberFormatException if a String\
+    \ isn't a valid representation of a BigDecimal or if the Number\n\t *        \
+    \ represents the double or float Infinity or NaN.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray.\n\t\
+    \ * @see Number */\n\tpublic Short getShort(final int index){\n\t\tObject returnable\
+    \ = this.get(index);\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\
+    \t\tif(returnable instanceof String){\n\t\t\t/* A String can be used to construct\
+    \ a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\
+    \t}\n\t\treturn ((Number)returnable).shortValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Boolean, Number, or String value at the given\
+    \ index.\n\t * @param index represents where the value is expected to be at.\n\
+    \t * @return the value at the index provided cast to a String.\n\t * @throws ClassCastException\
+    \ if there was a value but didn't match the assumed return type.\n\t * @throws\
+    \ IndexOutOfBoundsException if the index is outside of the range of element indexes\
+    \ in the JsonArray. */\n\tpublic String getString(final int index){\n\t\tObject\
+    \ returnable = this.get(index);\n\t\tif(returnable instanceof Boolean){\n\t\t\t\
+    returnable = returnable.toString();\n\t\t}else if(returnable instanceof Number){\n\
+    \t\t\treturnable = returnable.toString();\n\t\t}\n\t\treturn (String)returnable;\n\
+    \t}\n\n\t/* (non-Javadoc)\n\t * @see org.json.simple.Jsonable#asJsonString() */\n\
+    \t@Override\n\tpublic String toJson(){\n\t\tfinal StringWriter writable = new\
+    \ StringWriter();\n\t\ttry{\n\t\t\tthis.toJson(writable);\n\t\t}catch(final IOException\
+    \ caught){\n\t\t\t/* See java.io.StringWriter. */\n\t\t}\n\t\treturn writable.toString();\n\
+    \t}\n\n\t/* (non-Javadoc)\n\t * @see org.json.simple.Jsonable#toJsonString(java.io.Writer)\
+    \ */\n\t@Override\n\tpublic void toJson(final Writer writable) throws IOException{\n\
+    \t\tboolean isFirstElement = true;\n\t\tfinal Iterator<Object> elements = this.iterator();\n\
+    \t\twritable.write('[');\n\t\twhile(elements.hasNext()){\n\t\t\tif(isFirstElement){\n\
+    \t\t\t\tisFirstElement = false;\n\t\t\t}else{\n\t\t\t\twritable.write(',');\n\t\
+    \t\t}\n\t\t\twritable.write(Jsoner.serialize(elements.next()));\n\t\t}\n\t\twritable.write(']');\n\
+    \t}\n}\n"
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/JsonObject.java
+  visible: true
+  text: "/* Copyright 2016-2017 Clifton Labs\n * Licensed under the Apache License,\
+    \ Version 2.0 (the \"License\");\n * you may not use this file except in compliance\
+    \ with the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage com.github.cliftonlabs.json_simple;\n\nimport java.io.IOException;\n\
+    import java.io.StringWriter;\nimport java.io.Writer;\nimport java.math.BigDecimal;\n\
+    import java.util.Collection;\nimport java.util.HashMap;\nimport java.util.HashSet;\n\
+    import java.util.Iterator;\nimport java.util.Map;\nimport java.util.NoSuchElementException;\n\
+    import java.util.Set;\n\n/** JsonObject is a common non-thread safe data format\
+    \ for string to data mappings. The contents of a JsonObject are\n * only validated\
+    \ as JSON values on serialization. Meaning all values added to a JsonObject must\
+    \ be recognized by the\n * Jsoner for it to be a true 'JsonObject', so it is really\
+    \ a JsonableHashMap that will serialize to a JsonObject if all\n * of its contents\
+    \ are valid JSON.\n * @see Jsoner\n * @since 2.0.0 */\npublic class JsonObject\
+    \ extends HashMap<String, Object> implements Jsonable{\n\t/** The serialization\
+    \ version this class is compatible with. This value doesn't need to be incremented\
+    \ if and only\n\t * if the only changes to occur were updating comments, updating\
+    \ javadocs, adding new fields to the class, changing\n\t * the fields from static\
+    \ to non-static, or changing the fields from transient to non transient. All other\
+    \ changes\n\t * require this number be incremented. */\n\tprivate static final\
+    \ long serialVersionUID = 2L;\n\n\t/** Instantiates an empty JsonObject. */\n\t\
+    public JsonObject(){\n\t\tsuper();\n\t}\n\n\t/** Instantiate a new JsonObject\
+    \ by accepting a map's entries, which could lead to de/serialization issues of\
+    \ the\n\t * resulting JsonObject since the entry values aren't validated as JSON\
+    \ values.\n\t * @param map represents the mappings to produce the JsonObject with.\
+    \ */\n\tpublic JsonObject(final Map<String, ?> map){\n\t\tsuper(map);\n\t}\n\n\
+    \t/** A convenience method that assumes there is a BigDecimal, Number, or String\
+    \ at the given key. If a Number is\n\t * there its Number#toString() is used to\
+    \ construct a new BigDecimal(String). If a String is there it is used to\n\t *\
+    \ construct a new BigDecimal(String).\n\t * @param key representing where the\
+    \ value ought to be paired with.\n\t * @return a BigDecimal representing the value\
+    \ paired with the key.\n\t * @throws ClassCastException if the value didn't match\
+    \ the assumed return type.\n\t * @throws NumberFormatException if a String isn't\
+    \ a valid representation of a BigDecimal or if the Number\n\t *         represents\
+    \ the double or float Infinity or NaN.\n\t * @see BigDecimal\n\t * @see Number#toString()\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic BigDecimal\
+    \ getBigDecimal(final JsonKey key){\n\t\tObject returnable = this.get(key.getKey());\n\
+    \t\tif(returnable instanceof BigDecimal){\n\t\t\t/* Success there was a BigDecimal\
+    \ or it defaulted. */\n\t\t}else if(returnable instanceof Number){\n\t\t\t/* A\
+    \ number can be used to construct a BigDecimal */\n\t\t\treturnable = new BigDecimal(returnable.toString());\n\
+    \t\t}else if(returnable instanceof String){\n\t\t\t/* A number can be used to\
+    \ construct a BigDecimal */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn (BigDecimal)returnable;\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a BigDecimal, Number, or String at the given key. If a Number\
+    \ is\n\t * there its Number#toString() is used to construct a new BigDecimal(String).\
+    \ If a String is there it is used to\n\t * construct a new BigDecimal(String).\n\
+    \t * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a BigDecimal representing the value paired with the key or JsonKey#getValue()\
+    \ if the key isn't present.\n\t * @throws ClassCastException if the value didn't\
+    \ match the assumed return type.\n\t * @throws NumberFormatException if a String\
+    \ isn't a valid representation of a BigDecimal or if the Number\n\t *        \
+    \ represents the double or float Infinity or NaN.\n\t * @see BigDecimal\n\t *\
+    \ @see Number#toString()\n\t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey\
+    \ */\n\tpublic BigDecimal getBigDecimalOrDefault(final JsonKey key){\n\t\tObject\
+    \ returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable = this.get(key.getKey());\n\
+    \t\t}else{\n\t\t\treturnable = key.getValue();\n\t\t}\n\t\tif(returnable instanceof\
+    \ BigDecimal){\n\t\t\t/* Success there was a BigDecimal or it defaulted. */\n\t\
+    \t}else if(returnable instanceof Number){\n\t\t\t/* A number can be used to construct\
+    \ a BigDecimal */\n\t\t\treturnable = new BigDecimal(returnable.toString());\n\
+    \t\t}else if(returnable instanceof String){\n\t\t\t/* A String can be used to\
+    \ construct a BigDecimal */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn (BigDecimal)returnable;\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a Boolean or String value at the given key.\n\t * @param key\
+    \ representing where the value ought to be paired with.\n\t * @return a Boolean\
+    \ representing the value paired with the key.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @see JsonKey\n\t *\
+    \ @since 2.3.0 to utilize JsonKey */\n\tpublic Boolean getBoolean(final JsonKey\
+    \ key){\n\t\tObject returnable = this.get(key.getKey());\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\treturnable = Boolean.valueOf((String)returnable);\n\t\t}\n\t\
+    \treturn (Boolean)returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Boolean or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a Boolean representing\
+    \ the value paired with the key or JsonKey#getValue() if the key isn't present.\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic Boolean getBooleanOrDefault(final\
+    \ JsonKey key){\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\tif(returnable instanceof String){\n\t\t\treturnable = Boolean.valueOf((String)returnable);\n\
+    \t\t}\n\t\treturn (Boolean)returnable;\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a Number or String value at the given key.\n\t * @param key\
+    \ representing where the value ought to be paired with.\n\t * @return a Byte representing\
+    \ the value paired with the key (which may involve rounding or truncation).\n\t\
+    \ * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#byteValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Byte getByte(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).byteValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Byte representing the value paired with the key or JsonKey#getValue() if the\
+    \ key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#byteValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Byte getByteOrDefault(final JsonKey key){\n\t\
+    \tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).byteValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Collection at the given key.\n\t * @param <T> the kind of collection\
+    \ to expect at the key. Note unless manually added, collection values will be\
+    \ a\n\t *        JsonArray.\n\t * @param key representing where the value ought\
+    \ to be paired with.\n\t * @return a Collection representing the value paired\
+    \ with the key.\n\t * @throws ClassCastException if the value didn't match the\
+    \ assumed return type.\n\t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey\
+    \ */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic <T extends Collection<?>> T\
+    \ getCollection(final JsonKey key){\n\t\t/* The unchecked warning is suppressed\
+    \ because there is no way of guaranteeing at compile time the cast will\n\t\t\
+    \ * work. */\n\t\treturn (T)this.get(key.getKey());\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Collection at the given key.\n\t * @param <T>\
+    \ the kind of collection to expect at the key. Note unless manually added, collection\
+    \ values will be a\n\t *        JsonArray.\n\t * @param key representing where\
+    \ the value ought to be paired with.\n\t * @return a Collection representing the\
+    \ value paired with the key or JsonKey#getValue() if the key isn't present..\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\t@SuppressWarnings(\"\
+    unchecked\")\n\tpublic <T extends Collection<?>> T getCollectionOrDefault(final\
+    \ JsonKey key){\n\t\t/* The unchecked warning is suppressed because there is no\
+    \ way of guaranteeing at compile time the cast will\n\t\t * work. */\n\t\tObject\
+    \ returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable = this.get(key.getKey());\n\
+    \t\t}else{\n\t\t\treturnable = key.getValue();\n\t\t}\n\t\treturn (T)returnable;\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given key.\n\t * @param key representing where the value ought to be\
+    \ paired with.\n\t * @return a Double representing the value paired with the key\
+    \ (which may involve rounding or truncation).\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @throws NumberFormatException\
+    \ if a String isn't a valid representation of a BigDecimal or if the Number\n\t\
+    \ *         represents the double or float Infinity or NaN.\n\t * @see Number#doubleValue()\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic Double getDouble(final\
+    \ JsonKey key){\n\t\tObject returnable = this.get(key.getKey());\n\t\tif(returnable\
+    \ == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof String){\n\
+    \t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\treturnable\
+    \ = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).doubleValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given key.\n\t * @param key representing where the value ought to be\
+    \ paired with.\n\t * @return a Double representing the value paired with the key\
+    \ or JsonKey#getValue() if the key isn't present (which\n\t *         may involve\
+    \ rounding or truncation).\n\t * @throws ClassCastException if the value didn't\
+    \ match the assumed return type.\n\t * @throws NumberFormatException if a String\
+    \ isn't a valid representation of a BigDecimal or if the Number\n\t *        \
+    \ represents the double or float Infinity or NaN.\n\t * @see Number#doubleValue()\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic Double getDoubleOrDefault(final\
+    \ JsonKey key){\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).doubleValue();\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a Number or String value at the given key.\n\t * @param key\
+    \ representing where the value ought to be paired with.\n\t * @return a Float\
+    \ representing the value paired with the key (which may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#floatValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Float getFloat(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).floatValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Float representing the value paired with the key or JsonKey#getValue() if\
+    \ the key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#floatValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Float getFloatOrDefault(final JsonKey key){\n\
+    \t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).floatValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return an Integer representing\
+    \ the value paired with the key (which may involve rounding or truncation).\n\t\
+    \ * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#intValue()\n\t * @see JsonKey\n\t * @since 2.3.0 to\
+    \ utilize JsonKey */\n\tpublic Integer getInteger(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).intValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ an Integer representing the value paired with the key or JsonKey#getValue()\
+    \ if the key isn't present\n\t *         (which may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#intValue()\n\t * @see JsonKey\n\t * @since 2.3.0 to\
+    \ utilize JsonKey */\n\tpublic Integer getIntegerOrDefault(final JsonKey key){\n\
+    \t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).intValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a Long representing the\
+    \ value paired with the key (which may involve rounding or truncation).\n\t *\
+    \ @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#longValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Long getLong(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).longValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Long representing the value paired with the key or JsonKey#getValue() if the\
+    \ key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#longValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Long getLongOrDefault(final JsonKey key){\n\t\
+    \tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).longValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Map at the given key.\n\t * @param <T> the kind of map to expect\
+    \ at the key. Note unless manually added, Map values will be a JsonObject.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Map representing the value paired with the key.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @see JsonKey\n\t *\
+    \ @since 2.3.0 to utilize JsonKey */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic\
+    \ <T extends Map<?, ?>> T getMap(final JsonKey key){\n\t\t/* The unchecked warning\
+    \ is suppressed because there is no way of guaranteeing at compile time the cast\
+    \ will\n\t\t * work. */\n\t\treturn (T)this.get(key.getKey());\n\t}\n\n\t/** A\
+    \ convenience method that assumes there is a Map at the given key.\n\t * @param\
+    \ <T> the kind of map to expect at the key. Note unless manually added, Map values\
+    \ will be a JsonObject.\n\t * @param key representing where the value ought to\
+    \ be paired with.\n\t * @return a Map representing the value paired with the key\
+    \ or JsonKey#getValue() if the key isn't present.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @see JsonKey\n\t *\
+    \ @since 2.3.0 to utilize JsonKey */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic\
+    \ <T extends Map<?, ?>> T getMapOrDefault(final JsonKey key){\n\t\t/* The unchecked\
+    \ warning is suppressed because there is no way of guaranteeing at compile time\
+    \ the cast will\n\t\t * work. */\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\treturn (T)returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a Short representing\
+    \ the value paired with the key (which may involve rounding or truncation).\n\t\
+    \ * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#shortValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Short getShort(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).shortValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Short representing the value paired with the key or JsonKey#getValue() if\
+    \ the key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#shortValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Short getShortOrDefault(final JsonKey key){\n\
+    \t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).shortValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Boolean, Number, or String value at the given key.\n\t * @param key\
+    \ representing where the value ought to be paired with.\n\t * @return a String\
+    \ representing the value paired with the key.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @see JsonKey\n\t *\
+    \ @since 2.3.0 to utilize JsonKey */\n\tpublic String getString(final JsonKey\
+    \ key){\n\t\tObject returnable = this.get(key.getKey());\n\t\tif(returnable instanceof\
+    \ Boolean){\n\t\t\treturnable = returnable.toString();\n\t\t}else if(returnable\
+    \ instanceof Number){\n\t\t\treturnable = returnable.toString();\n\t\t}\n\t\t\
+    return (String)returnable;\n\t}\n\n\t/** A convenience method that assumes there\
+    \ is a Boolean, Number, or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a String representing\
+    \ the value paired with the key or JsonKey#getValue() if the key isn't present.\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic String getStringOrDefault(final\
+    \ JsonKey key){\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\tif(returnable instanceof Boolean){\n\t\t\treturnable = returnable.toString();\n\
+    \t\t}else if(returnable instanceof Number){\n\t\t\treturnable = returnable.toString();\n\
+    \t\t}\n\t\treturn (String)returnable;\n\t}\n\n\t/** Convenience method that calls\
+    \ put for the given key and value.\n\t * @param key represents the JsonKey used\
+    \ for the value's association in the map.\n\t * @param value represents the key's\
+    \ association in the map.\n\t * @see Map#put(Object, Object)\n\t * @since 3.1.1\
+    \ to use JsonKey instead of calling JsonKey#getKey() each time. */\n\tpublic void\
+    \ put(final JsonKey key, final Object value){\n\t\tthis.put(key.getKey(), value);\n\
+    \t}\n\n\t/** Calls putAll for the given map, but returns the JsonObject for chaining\
+    \ calls.\n\t * @param map represents the map to be copied into the JsonObject.\n\
+    \t * @return the JsonObject to allow chaining calls.\n\t * @see Map#putAll(Map)\n\
+    \t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonObject putAllChain(final\
+    \ Map<String, Object> map){\n\t\tthis.putAll(map);\n\t\treturn this;\n\t}\n\n\t\
+    /** Convenience method that calls put for the given key and value, but returns\
+    \ the JsonObject for chaining calls.\n\t * @param key represents the JsonKey used\
+    \ for the value's association in the map.\n\t * @param value represents the key's\
+    \ association in the map.\n\t * @return the JsonObject to allow chaining calls.\n\
+    \t * @see Map#put(Object, Object)\n\t * @since 3.1.1 to use JsonKey instead of\
+    \ calling JsonKey#getKey() each time. */\n\tpublic JsonObject putChain(final JsonKey\
+    \ key, final Object value){\n\t\tthis.put(key.getKey(), value);\n\t\treturn this;\n\
+    \t}\n\n\t/** Calls put for the given key and value, but returns the JsonObject\
+    \ for chaining calls.\n\t * @param key represents the value's association in the\
+    \ map.\n\t * @param value represents the key's association in the map.\n\t * @return\
+    \ the JsonObject to allow chaining calls.\n\t * @see Map#put(Object, Object)\n\
+    \t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonObject putChain(final\
+    \ String key, final Object value){\n\t\tthis.put(key, value);\n\t\treturn this;\n\
+    \t}\n\n\t/** Convenience method that calls remove for the given key.\n\t * @param\
+    \ key represents the value's association in the map.\n\t * @return an object representing\
+    \ the removed value or null if there wasn't one.\n\t * @since 3.1.1 to use JsonKey\
+    \ instead of calling JsonKey#getKey() each time.\n\t * @see Map#remove(Object)\
+    \ */\n\tpublic Object remove(final JsonKey key){\n\t\treturn this.remove(key.getKey());\n\
+    \t}\n\n\t/** Convenience method that calls remove for the given key and value.\n\
+    \t * @param key represents the value's association in the map.\n\t * @param value\
+    \ represents the expected value at the given key.\n\t * @return a boolean, which\
+    \ is true if the value was removed. It is false otherwise.\n\t * @since 3.1.1\
+    \ to use JsonKey instead of calling JsonKey#getKey() each time.\n\t * @see Map#remove(Object,\
+    \ Object) */\n\tpublic boolean remove(final JsonKey key, final Object value){\n\
+    \t\treturn this.remove(key.getKey(), value);\n\t}\n\n\t/** Ensures the given keys\
+    \ are present.\n\t * @param keys represents the keys that must be present.\n\t\
+    \ * @throws NoSuchElementException if any of the given keys are missing.\n\t *\
+    \ @since 2.3.0 to ensure critical keys are in the JsonObject. */\n\tpublic void\
+    \ requireKeys(final JsonKey... keys){\n\t\t/* Track all of the missing keys. */\n\
+    \t\tfinal Set<JsonKey> missing = new HashSet<>();\n\t\tfor(final JsonKey k : keys){\n\
+    \t\t\tif(!this.containsKey(k.getKey())){\n\t\t\t\tmissing.add(k);\n\t\t\t}\n\t\
+    \t}\n\t\tif(!missing.isEmpty()){\n\t\t\t/* Report any missing keys in the exception.\
+    \ */\n\t\t\tfinal StringBuilder sb = new StringBuilder();\n\t\t\tfor(final JsonKey\
+    \ k : missing){\n\t\t\t\tsb.append(k.getKey()).append(\", \");\n\t\t\t}\n\t\t\t\
+    sb.setLength(sb.length() - 2);\n\t\t\tfinal String s = missing.size() > 1 ? \"\
+    s\" : \"\";\n\t\t\tthrow new NoSuchElementException(\"A JsonObject is missing\
+    \ required key\" + s + \": \" + sb.toString());\n\t\t}\n\t}\n\n\t/* (non-Javadoc)\n\
+    \t * @see org.json.simple.Jsonable#asJsonString() */\n\t@Override\n\tpublic String\
+    \ toJson(){\n\t\tfinal StringWriter writable = new StringWriter();\n\t\ttry{\n\
+    \t\t\tthis.toJson(writable);\n\t\t}catch(final IOException caught){\n\t\t\t/*\
+    \ See java.io.StringWriter. */\n\t\t}\n\t\treturn writable.toString();\n\t}\n\n\
+    \t/* (non-Javadoc)\n\t * @see org.json.simple.Jsonable#toJsonString(java.io.Writer)\
+    \ */\n\t@Override\n\tpublic void toJson(final Writer writable) throws IOException{\n\
+    \t\t/* Writes the map in JSON object format. */\n\t\tboolean isFirstEntry = true;\n\
+    \t\tfinal Iterator<Entry<String, Object>> entries = this.entrySet().iterator();\n\
+    \t\twritable.write('{');\n\t\twhile(entries.hasNext()){\n\t\t\tif(isFirstEntry){\n\
+    \t\t\t\tisFirstEntry = false;\n\t\t\t}else{\n\t\t\t\twritable.write(',');\n\t\t\
+    \t}\n\t\t\tfinal Entry<String, Object> entry = entries.next();\n\t\t\twritable.write(Jsoner.serialize(entry.getKey()));\n\
+    \t\t\twritable.write(':');\n\t\t\twritable.write(Jsoner.serialize(entry.getValue()));\n\
+    \t\t}\n\t\twritable.write('}');\n\t}\n}\n"
+  learner_created: false
+- name: src/com/github/cliftonlabs/json_simple/JsonException.java
+  visible: true
+  text: "/* Copyright 2016-2017 Clifton Labs\n * Licensed under the Apache License,\
+    \ Version 2.0 (the \"License\");\n * you may not use this file except in compliance\
+    \ with the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage com.github.cliftonlabs.json_simple;\n\n/** JsonException explains\
+    \ how and where the problem occurs in the source JSON text during deserialization.\n\
+    \ * @since 3.0.0 */\npublic class JsonException extends Exception{\n\t/** The\
+    \ kinds of exceptions that can trigger a JsonException. */\n\tpublic enum Problems{\n\
+    \t\t@SuppressWarnings(\"javadoc\")\n\t\tDISALLOWED_TOKEN,\n\t\t/** @since 2.3.0\
+    \ to consolidate exceptions that occur during deserialization. */\n\t\tIOEXCEPTION,\n\
+    \t\t@SuppressWarnings(\"javadoc\")\n\t\tUNEXPECTED_CHARACTER,\n\t\t@SuppressWarnings(\"\
+    javadoc\")\n\t\tUNEXPECTED_EXCEPTION,\n\t\t@SuppressWarnings(\"javadoc\")\n\t\t\
+    UNEXPECTED_TOKEN;\n\t}\n\n\t@SuppressWarnings(\"javadoc\")\n\tprivate static final\
+    \ long\tserialVersionUID\t= 1L;\n\t@SuppressWarnings(\"javadoc\")\n\tprivate final\
+    \ int\t\t\tposition;\n\t@SuppressWarnings(\"javadoc\")\n\tprivate final Problems\t\
+    \tproblemType;\n\t@SuppressWarnings(\"javadoc\")\n\tprivate final Object\t\tunexpectedObject;\n\
+    \n\t/** Instantiates a JsonException without assumptions.\n\t * @param position\
+    \ where the exception occurred.\n\t * @param problemType how the exception occurred.\n\
+    \t * @param unexpectedObject what caused the exception. */\n\tpublic JsonException(final\
+    \ int position, final Problems problemType, final Object unexpectedObject){\n\t\
+    \tthis.position = position;\n\t\tthis.problemType = problemType;\n\t\tthis.unexpectedObject\
+    \ = unexpectedObject;\n\t\tif(Problems.IOEXCEPTION.equals(problemType) || Problems.UNEXPECTED_EXCEPTION.equals(problemType)){\n\
+    \t\t\tif(unexpectedObject instanceof Throwable){\n\t\t\t\tthis.initCause((Throwable)unexpectedObject);\n\
+    \t\t\t}\n\t\t}\n\t}\n\n\t@Override\n\tpublic String getMessage(){\n\t\tfinal StringBuilder\
+    \ sb = new StringBuilder();\n\t\tswitch(this.problemType){\n\t\t\tcase DISALLOWED_TOKEN:\n\
+    \t\t\t\tsb.append(\"The disallowed token (\").append(this.unexpectedObject).append(\"\
+    ) was found at position \").append(this.position).append(\". If this is in error,\
+    \ try again with a deserialization method in Jsoner that allows the token instead.\
+    \ Otherwise, fix the parsable string and try again.\");\n\t\t\t\tbreak;\n\t\t\t\
+    case IOEXCEPTION:\n\t\t\t\tsb.append(\"An IOException was encountered, ensure\
+    \ the reader is properly instantiated, isn't closed, or that it is ready before\
+    \ trying again.\\n\").append(this.unexpectedObject);\n\t\t\t\tbreak;\n\t\t\tcase\
+    \ UNEXPECTED_CHARACTER:\n\t\t\t\tsb.append(\"The unexpected character (\").append(this.unexpectedObject).append(\"\
+    ) was found at position \").append(this.position).append(\". Fix the parsable\
+    \ string and try again.\");\n\t\t\t\tbreak;\n\t\t\tcase UNEXPECTED_TOKEN:\n\t\t\
+    \t\tsb.append(\"The unexpected token \").append(this.unexpectedObject).append(\"\
+    \ was found at position \").append(this.position).append(\". Fix the parsable\
+    \ string and try again.\");\n\t\t\t\tbreak;\n\t\t\tcase UNEXPECTED_EXCEPTION:\n\
+    \t\t\t\tsb.append(\"Please report this to the library's maintainer. The unexpected\
+    \ exception that should be addressed before trying again occurred at position\
+    \ \").append(this.position).append(\":\\n\").append(this.unexpectedObject);\n\t\
+    \t\t\tbreak;\n\t\t\tdefault:\n\t\t\t\tsb.append(\"Please report this to the library's\
+    \ maintainer. An error at position \").append(this.position).append(\" occurred.\
+    \ There are no recovery recommendations available.\");\n\t\t\t\tbreak;\n\t\t}\n\
+    \t\treturn sb.toString();\n\t}\n\n\t/** Helps debug the location of a problem.\n\
+    \t * @return an index of the string character the error type occurred at. */\n\
+    \tpublic int getPosition(){\n\t\treturn this.position;\n\t}\n\n\t/** Helps find\
+    \ an appropriate solution for a problem.\n\t * @return the enumeration for how\
+    \ the exception occurred. */\n\tpublic Problems getProblemType(){\n\t\treturn\
+    \ this.problemType;\n\t}\n\n\t/** Helps identify the problem.\n\t * @return a\
+    \ representation of what caused the exception. */\n\tpublic Object getUnexpectedObject(){\n\
+    \t\treturn this.unexpectedObject;\n\t}\n}\n"
+  learner_created: false
+status: Unchecked
+record: -1

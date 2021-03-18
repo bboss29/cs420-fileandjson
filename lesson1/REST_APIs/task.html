@@ -1,0 +1,48 @@
+<html>
+<h3>The Ultimate Recipe Database</h3>
+<p>The task for this module to complete the class
+    <code>OnlineRecipeDatabase</code>. This class connects to
+a website (Recipe Puppy) and allows you to query recipes by ingredient
+or by keyword. The website returns its results as a JSON document. It
+is an API.
+<h3>Specific Tasks</h3>
+<ul>
+    <li><code>OnlineRecipeDatabase</code> has
+        Four methods and a default constructor.
+        <ul>
+            <li><code>getRecipesByIngredients</code> takes in a <code>String</code> which is appended to a base URL
+                and with that, it queries the online site and brings the contents of it as a <code>String</code>.
+            <strong>You have to watch the videos to get this. This is not in the slides</strong>. Lastly, you need to
+                return a <code>JsonObject</code> with that <code>String</code></li>.
+            <li><code>getRecipesByDish</code>. Operates under the same principle as the previous method. You just
+            need to complete a few more things.</li>
+            <li><code>formatRecipeAsString</code>: This method takes in a <code>JsonObject</code> with recipes and
+                converts the recipes into a <code>String</code>. See the table below for an example:
+            <br/>
+            <table>
+                <tr>
+                    <th>Json</th><th>String</th>
+                </tr>
+                <tr>
+                <td>
+                    {"title":"Recipe Puppy","version":0.1,"href":"http:\/\/www.recipepuppy.com\/","results":[{"title":"Fast Food Tuna Melt","href":"http:\/\/www.recipezaar.com\/Fast-Food-Tuna-Melt-242551","ingredients":"bread, cheese, mayonnaise, tuna","thumbnail":"http:\/\/img.recipepuppy.com\/556137.jpg"},{"title":"\nOlive Cheesy English Muffin Squares Recipe\n\n","href":"http:\/\/cookeatshare.com\/recipes\/olive-cheesy-english-muffin-squares-47412","ingredients":"olives, mayonnaise, cheese, english muffin","thumbnail":"http:\/\/img.recipepuppy.com\/799490.jpg"}]}
+                </td>
+                <td>
+                title:Fast Food Tuna Melt
+                link:http:\/\/www.recipezaar.com\/Fast-Food-Tuna-Melt-242551
+                ingredients:bread, cheese, mayonnaise, tuna
+                title:Olive Cheesy English Muffin Squares Recipe
+                link:http:\/\/cookeatshare.com\/recipes\/olive-cheesy-english-muffin-squares-47412
+                ingredients:olives, mayonnaise, cheese, english muffin
+                </td>
+                </tr>
+            </table>
+            <li><code>saveRecipes</code>: This method takes in a String like the one above and saves it to a file specified in <code>outfile</code>.
+        It should save no more and no less than the <code>String</code> passed. In here you can try a few methods to see what works. When this
+        is working, if you run <code>Task.java</code> you will see a file appear in the root directory of your project. You can then
+        check that it is working all right.</li>
+        </ul>
+        Run <code>Task.java</code> to check that everything is compiling and working before running tests. Also, you can modify this
+        class to test and debug your code.
+                <h4>Don't forget to run the "check" until you get the task in the best shape you can</h4>
+</html>

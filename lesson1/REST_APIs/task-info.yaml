@@ -1,0 +1,1703 @@
+type: edu
+files:
+- name: src/Task.java
+  visible: true
+  text: |-
+    public class Task {
+        public static void main(String[] args){
+            OnlineRecipeDatabase ord = new OnlineRecipeDatabase();
+            try {
+                String ommelets = ord.formatRecipeAsString(ord.getRecipesByDish("ommelette"));
+                String gotRice = ord.formatRecipeAsString(ord.getRecipesByIngredients("rice,onions"));
+                System.out.println(ommelets);
+                System.out.println(gotRice);
+                ord.saveRecipes(gotRice,"rice.txt");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+  learner_created: false
+- name: test/Tests.java
+  visible: false
+  text: |-
+    import json_simple.JsonArray;
+    import json_simple.JsonObject;
+    import org.junit.Assert;
+    import org.junit.Test;
+
+    import java.io.File;
+    import java.io.FileNotFoundException;
+
+    public class Tests {
+      @Test
+      public void testSolution() {
+        // put your test here
+        OnlineRecipeDatabase ord = new OnlineRecipeDatabase();
+        JsonObject obj1 = null;
+        JsonObject obj2 = null;
+        JsonArray arr1 = null;
+        JsonArray arr2 = null;
+        String list=null;
+        try {
+          obj1 = ord.getRecipesByDish("artichoke");
+          obj2 = ord.getRecipesByIngredients("cheese,mayonnaise");
+          int elems = obj1.keySet().size();
+          arr1 = (JsonArray) obj1.get("results");
+          arr2 = (JsonArray) obj2.get("results");
+          String site = (String)obj1.get("title");
+          String oneDish = (String)((JsonObject)arr2.get(0)).get("ingredients");
+          list = ord.formatRecipeAsString(obj2);
+          ord.saveRecipes(list,"test.txt");
+          Assert.assertEquals("Are you reading/converting the full JSON document?",4,elems);
+          Assert.assertTrue("Are your recipes by dish coming as a JsonArray?",arr1.size()>6 && arr1.size()<11);
+          Assert.assertTrue("Are your recipes by ingredient coming as a JsonArray?",arr2.size()>6 && arr1.size()<11);
+          Assert.assertTrue("Are you sure you are querying the right thing?", oneDish.contains("cheese"));
+          Assert.assertTrue("Are you returning the full JsonObject?",site.equals("Recipe Puppy"));
+          Assert.assertTrue("Are you formatting the Json as String correctly?",list.contains(oneDish));
+        }catch(Exception e){
+          Assert.fail(e.getMessage());
+        }
+
+        try{
+          File f = new File("test.txt");
+          Assert.assertTrue("Are you sure you are saving a file with the name that comes in the parameter?",f.exists());
+          Assert.assertEquals("Are you writing the file as directed?",f.length(),list.length());
+        }catch(SecurityException e){
+          Assert.fail("Are you saving the file with ANY filename that is passed?");
+        }
+
+      }
+    }
+  learner_created: false
+- name: src/OnlineRecipeDatabase.java
+  visible: true
+  placeholders:
+  - offset: 624
+    length: 0
+    placeholder_text: "/* TODO \nYou have to use the url to retrieve the contents\
+      \ of the website. \nThis will be a String, but in JSON format. */"
+    initial_state:
+      length: 120
+      offset: 525
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |2-
+
+              // From now on is like reading from the keyboard...
+              Scanner scan = new Scanner(url.openStream());
+              String result="";
+              while (scan.hasNext())
+              {
+                  result += scan.nextLine();
+
+              }
+              scan.close();
+  - offset: 685
+    length: 41
+    placeholder_text: "/* TODO \nRemember to return a JSON object.*/"
+    initial_state:
+      length: 44
+      offset: 661
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: (JsonObject) Jsoner.deserialize(result, new JsonObject())
+  - offset: 870
+    length: 43
+    placeholder_text: "/* TODO \nFill in this data type (Object) */"
+    initial_state:
+      length: 43
+      offset: 854
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: URL
+  - offset: 913
+    length: 46
+    placeholder_text: |-
+      /* TODO
+      Fill in this datatype (Object) */
+    initial_state:
+      length: 41
+      offset: 908
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: URL
+  - offset: 959
+    length: 2
+    placeholder_text: |-
+      /* TODO
+      Read the information coming from the web
+       */
+    initial_state:
+      length: 52
+      offset: 978
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |2-
+       // From now on is like reading from the keyboard...
+              Scanner scan = new Scanner(url.openStream());
+              String result="";
+              while (scan.hasNext())
+              {
+                  result += scan.nextLine();
+
+              }
+              scan.close();
+  - offset: 975
+    length: 39
+    placeholder_text: "/* TODO \nreturn the appropriate result.\n*/"
+    initial_state:
+      length: 42
+      offset: 1046
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: (JsonObject) Jsoner.deserialize(result, new JsonObject());
+  - offset: 1496
+    length: 3
+    placeholder_text: "/* TODO \nThis should return a String with each recipe in three\
+      \ lines:\nTitle:the title of the recipe\nLink:the link to the recipe\nIngredients:The\
+      \ ingredients of teh recipe.*/"
+    initial_state:
+      length: 172
+      offset: 1190
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |-
+      JsonArray recipes = (JsonArray) doc.get("results");
+              for(Object r : recipes){
+                  JsonObject obj = (JsonObject) r;
+                  results += "Title:"+(String)obj.get("title")+"\n";
+                  results += "link:"+(String)obj.get("href")+"\n";
+                  results += "ingredients:"+(String)obj.get("ingredients")+"\n";
+              }
+  - offset: 1596
+    length: 110
+    placeholder_text: "/* TODO\nGiven a String with some text in it, write that text\
+      \ to a file. \nThe name of the file is given in outfile */"
+    initial_state:
+      length: 116
+      offset: 1460
+    initialized_from_dependency: false
+    selected: true
+    status: Unchecked
+    encrypted_possible_answer: |-
+      try(DataOutputStream out = new DataOutputStream(new FileOutputStream(outfile))){
+                  out.writeBytes(text);
+              }catch(IOException e){
+                  e.printStackTrace();
+              }
+  text: "import json_simple.JsonArray;\nimport json_simple.JsonObject;\nimport json_simple.Jsoner;\n\
+    \nimport java.io.DataOutputStream;\nimport java.io.FileOutputStream;\nimport java.io.IOException;\n\
+    import java.net.URL;\nimport java.util.Scanner;\n\npublic class OnlineRecipeDatabase\
+    \ {\n\n    String baseUrl = \"http://www.recipepuppy.com/api/?\";\n\n    public\
+    \ JsonObject getRecipesByIngredients(String ingredients) throws Exception\n  \
+    \  {\n        //Getting the things ready to connect to the web\n        URL url\
+    \ = new URL(baseUrl+\"i=\"+ingredients);\n/* TODO \nYou have to use the url to\
+    \ retrieve the contents of the website. \nThis will be a String, but in JSON format.\
+    \ */\n        return /* TODO \nRemember to return a JSON object.*/;\n    }\n\n\
+    \    public JsonObject getRecipesByDish(String dish) throws Exception\n    {\n\
+    \        //Getting the things ready to connect to the web\n        /* TODO \n\
+    Fill in this data type (Object) */ url = new /* TODO\nFill in this datatype (Object)\
+    \ */(baseUrl+\"q=\"+dish);\n\n       /* TODO\nRead the information coming from\
+    \ the web\n */\n        return /* TODO \nreturn the appropriate result.\n*/\n\
+    \    }\n\n\n    public String formatRecipeAsString(JsonObject doc){\n        String\
+    \ results = \"\";\n        /* TODO \nThis should return a String with each recipe\
+    \ in three lines:\nTitle:the title of the recipe\nLink:the link to the recipe\n\
+    Ingredients:The ingredients of teh recipe.*/\n        return results;\n    }\n\
+    \n    public void saveRecipes(String text, String outfile){\n        /* TODO\n\
+    Given a String with some text in it, write that text to a file. \nThe name of\
+    \ the file is given in outfile */\n    }\n\n}\n"
+  learner_created: false
+- name: src/json_simple/Jsonable.java
+  visible: true
+  text: "/* Copyright 2016 Clifton Labs\n * Licensed under the Apache License, Version\
+    \ 2.0 (the \"License\");\n * you may not use this file except in compliance with\
+    \ the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage json_simple;\n\nimport java.io.IOException;\nimport java.io.Writer;\n\
+    \n/** Jsonables can be serialized in java script object notation (JSON). Deserializing\
+    \ a String produced by a Jsonable\n * should represent the Jsonable in JSON form.\n\
+    \ * @since 2.0.0 */\npublic interface Jsonable{\n\t/** Serialize to a JSON formatted\
+    \ string.\n\t * @return a string, formatted in JSON, that represents the Jsonable.\
+    \ */\n\tpublic String toJson();\n\n\t/** Serialize to a JSON formatted stream.\n\
+    \t * @param writable where the resulting JSON text should be sent.\n\t * @throws\
+    \ IOException when the writable encounters an I/O error. */\n\tpublic void toJson(Writer\
+    \ writable) throws IOException;\n}\n"
+  learner_created: false
+- name: src/json_simple/JsonArray.java
+  visible: true
+  text: "/* Copyright 2016-2017 Clifton Labs\n * Licensed under the Apache License,\
+    \ Version 2.0 (the \"License\");\n * you may not use this file except in compliance\
+    \ with the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage json_simple;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\
+    import java.io.Writer;\nimport java.math.BigDecimal;\nimport java.util.ArrayList;\n\
+    import java.util.Collection;\nimport java.util.Iterator;\nimport java.util.Map;\n\
+    \n/** JsonArray is a common non-thread safe data format for a collection of data.\
+    \ The contents of a JsonArray are only\n * validated as JSON values on serialization.\
+    \ Meaning all values added to a JsonArray must be recognized by the Jsoner\n *\
+    \ for it to be a true 'JsonArray', so it is really a JsonableArrayList that will\
+    \ serialize to a JsonArray if all of\n * its contents are valid JSON.\n * @see\
+    \ Jsoner\n * @since 2.0.0 */\npublic class JsonArray extends ArrayList<Object>\
+    \ implements Jsonable{\n\t/** The serialization version this class is compatible\
+    \ with. This value doesn't need to be incremented if and only\n\t * if the only\
+    \ changes to occur were updating comments, updating javadocs, adding new fields\
+    \ to the class, changing\n\t * the fields from static to non-static, or changing\
+    \ the fields from transient to non transient. All other changes\n\t * require\
+    \ this number be incremented. */\n\tprivate static final long serialVersionUID\
+    \ = 1L;\n\n\t/** Instantiates an empty JsonArray. */\n\tpublic JsonArray(){\n\t\
+    \tsuper();\n\t}\n\n\t/** Instantiate a new JsonArray using ArrayList's constructor\
+    \ of the same type.\n\t * @param collection represents the elements to produce\
+    \ the JsonArray with. */\n\tpublic JsonArray(final Collection<?> collection){\n\
+    \t\tsuper(collection);\n\t}\n\n\t/** Calls add for the given collection of elements,\
+    \ but returns the JsonArray for chaining calls.\n\t * @param collection represents\
+    \ the items to be appended to the JsonArray.\n\t * @return the JsonArray to allow\
+    \ chaining calls.\n\t * @see ArrayList#addAll(Collection)\n\t * @since 3.1.0 for\
+    \ inline instantiation. */\n\tpublic JsonArray addAllChain(final Collection<?>\
+    \ collection){\n\t\tthis.addAll(collection);\n\t\treturn this;\n\t}\n\n\t/** Calls\
+    \ add for the given index and collection, but returns the JsonArray for chaining\
+    \ calls.\n\t * @param index represents what index the element is added to in the\
+    \ JsonArray.\n\t * @param collection represents the item to be appended to the\
+    \ JsonArray.\n\t * @return the JsonArray to allow chaining calls.\n\t * @see ArrayList#addAll(int,\
+    \ Collection)\n\t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonArray\
+    \ addAllChain(final int index, final Collection<?> collection){\n\t\tthis.addAll(index,\
+    \ collection);\n\t\treturn this;\n\t}\n\n\t/** Calls add for the given element,\
+    \ but returns the JsonArray for chaining calls.\n\t * @param index represents\
+    \ what index the element is added to in the JsonArray.\n\t * @param element represents\
+    \ the item to be appended to the JsonArray.\n\t * @return the JsonArray to allow\
+    \ chaining calls.\n\t * @see ArrayList#add(int, Object)\n\t * @since 3.1.0 for\
+    \ inline instantiation. */\n\tpublic JsonArray addChain(final int index, final\
+    \ Object element){\n\t\tthis.add(index, element);\n\t\treturn this;\n\t}\n\n\t\
+    /** Calls add for the given element, but returns the JsonArray for chaining calls.\n\
+    \t * @param element represents the item to be appended to the JsonArray.\n\t *\
+    \ @return the JsonArray to allow chaining calls.\n\t * @see ArrayList#add(Object)\n\
+    \t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonArray addChain(final\
+    \ Object element){\n\t\tthis.add(element);\n\t\treturn this;\n\t}\n\n\t/** A convenience\
+    \ method that assumes every element of the JsonArray is castable to T before adding\
+    \ it to a\n\t * collection of Ts.\n\t * @param <T> represents the type that all\
+    \ of the elements of the JsonArray should be cast to and the type the\n\t *  \
+    \      collection will contain.\n\t * @param destination represents where all\
+    \ of the elements of the JsonArray are added to after being cast to the\n\t *\
+    \        generic type\n\t *        provided.\n\t * @throws ClassCastException\
+    \ if the unchecked cast of an element to T fails. */\n\t@SuppressWarnings(\"unchecked\"\
+    )\n\tpublic <T> void asCollection(final Collection<T> destination){\n\t\tfor(final\
+    \ Object o : this){\n\t\t\tdestination.add((T)o);\n\t\t}\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a BigDecimal, Number, or String at the given index.\
+    \ If a Number or\n\t * String is there it is used to construct a new BigDecimal.\n\
+    \t * @param index representing where the value is expected to be at.\n\t * @return\
+    \ the value stored at the key or the default provided if the key doesn't exist.\n\
+    \t * @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return types.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @throws NumberFormatException\
+    \ if a String isn't a valid representation of a BigDecimal.\n\t * @see BigDecimal\n\
+    \t * @see Number#doubleValue() */\n\tpublic BigDecimal getBigDecimal(final int\
+    \ index){\n\t\tObject returnable = this.get(index);\n\t\tif(returnable instanceof\
+    \ BigDecimal){\n\t\t\t/* Success there was a BigDecimal. */\n\t\t}else if(returnable\
+    \ instanceof Number){\n\t\t\t/* A number can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal(returnable.toString());\n\t\t}else if(returnable\
+    \ instanceof String){\n\t\t\t/* A number can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ (BigDecimal)returnable;\n\t}\n\n\t/** A convenience method that assumes there\
+    \ is a Boolean or String value at the given index.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a boolean.\n\t * @throws ClassCastException if there was a value but\
+    \ didn't match the assumed return type.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray. */\n\
+    \tpublic Boolean getBoolean(final int index){\n\t\tObject returnable = this.get(index);\n\
+    \t\tif(returnable instanceof String){\n\t\t\treturnable = Boolean.valueOf((String)returnable);\n\
+    \t\t}\n\t\treturn (Boolean)returnable;\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a Number or String value at the given index.\n\t * @param index\
+    \ represents where the value is expected to be at.\n\t * @return the value at\
+    \ the index provided cast to a byte.\n\t * @throws ClassCastException if there\
+    \ was a value but didn't match the assumed return type.\n\t * @throws NumberFormatException\
+    \ if a String isn't a valid representation of a BigDecimal or if the Number\n\t\
+    \ *         represents the double or float Infinity or NaN.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray.\n\t\
+    \ * @see Number */\n\tpublic Byte getByte(final int index){\n\t\tObject returnable\
+    \ = this.get(index);\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\
+    \t\tif(returnable instanceof String){\n\t\t\t/* A String can be used to construct\
+    \ a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\
+    \t}\n\t\treturn ((Number)returnable).byteValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Collection value at the given index.\n\t * @param\
+    \ <T> the kind of collection to expect at the index. Note unless manually added,\
+    \ collection values will be a\n\t *        JsonArray.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a Collection.\n\t * @throws ClassCastException if there was a value\
+    \ but didn't match the assumed return type.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray.\n\t\
+    \ * @see Collection */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic <T extends\
+    \ Collection<?>> T getCollection(final int index){\n\t\t/* The unchecked warning\
+    \ is suppressed because there is no way of guaranteeing at compile time the cast\
+    \ will\n\t\t * work. */\n\t\treturn (T)this.get(index);\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given index.\n\t\
+    \ * @param index represents where the value is expected to be at.\n\t * @return\
+    \ the value at the index provided cast to a double.\n\t * @throws ClassCastException\
+    \ if there was a value but didn't match the assumed return type.\n\t * @throws\
+    \ NumberFormatException if a String isn't a valid representation of a BigDecimal\
+    \ or if the Number\n\t *         represents the double or float Infinity or NaN.\n\
+    \t * @throws IndexOutOfBoundsException if the index is outside of the range of\
+    \ element indexes in the JsonArray.\n\t * @see Number */\n\tpublic Double getDouble(final\
+    \ int index){\n\t\tObject returnable = this.get(index);\n\t\tif(returnable ==\
+    \ null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\
+    \t\t/* A String can be used to construct a BigDecimal. */\n\t\t\treturnable =\
+    \ new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).doubleValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given index.\n\t * @param index represents where the value is expected\
+    \ to be at.\n\t * @return the value at the index provided cast to a float.\n\t\
+    \ * @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return type.\n\t * @throws NumberFormatException if a String isn't a valid representation\
+    \ of a BigDecimal or if the Number\n\t *         represents the double or float\
+    \ Infinity or NaN.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @see Number */\n\tpublic\
+    \ Float getFloat(final int index){\n\t\tObject returnable = this.get(index);\n\
+    \t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\t\
+    returnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).floatValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given index.\n\t * @param index represents where the value is expected\
+    \ to be at.\n\t * @return the value at the index provided cast to a int.\n\t *\
+    \ @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return type.\n\t * @throws NumberFormatException if a String isn't a valid representation\
+    \ of a BigDecimal or if the Number\n\t *         represents the double or float\
+    \ Infinity or NaN.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @see Number */\n\tpublic\
+    \ Integer getInteger(final int index){\n\t\tObject returnable = this.get(index);\n\
+    \t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\t\
+    returnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).intValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given index.\n\t * @param index represents where the value is expected\
+    \ to be at.\n\t * @return the value at the index provided cast to a long.\n\t\
+    \ * @throws ClassCastException if there was a value but didn't match the assumed\
+    \ return type.\n\t * @throws NumberFormatException if a String isn't a valid representation\
+    \ of a BigDecimal or if the Number\n\t *         represents the double or float\
+    \ Infinity or NaN.\n\t * @throws IndexOutOfBoundsException if the index is outside\
+    \ of the range of element indexes in the JsonArray.\n\t * @see Number */\n\tpublic\
+    \ Long getLong(final int index){\n\t\tObject returnable = this.get(index);\n\t\
+    \tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\t\
+    returnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).longValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Map value at the given\
+    \ index.\n\t * @param <T> the kind of map to expect at the index. Note unless\
+    \ manually added, Map values will be a JsonObject.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a Map.\n\t * @throws ClassCastException if there was a value but didn't\
+    \ match the assumed return type.\n\t * @throws IndexOutOfBoundsException if the\
+    \ index is outside of the range of element indexes in the JsonArray.\n\t * @see\
+    \ Map */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic <T extends Map<?, ?>> T\
+    \ getMap(final int index){\n\t\t/* The unchecked warning is suppressed because\
+    \ there is no way of guaranteeing at compile time the cast will\n\t\t * work.\
+    \ */\n\t\treturn (T)this.get(index);\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given index.\n\t * @param index represents\
+    \ where the value is expected to be at.\n\t * @return the value at the index provided\
+    \ cast to a short.\n\t * @throws ClassCastException if there was a value but didn't\
+    \ match the assumed return type.\n\t * @throws NumberFormatException if a String\
+    \ isn't a valid representation of a BigDecimal or if the Number\n\t *        \
+    \ represents the double or float Infinity or NaN.\n\t * @throws IndexOutOfBoundsException\
+    \ if the index is outside of the range of element indexes in the JsonArray.\n\t\
+    \ * @see Number */\n\tpublic Short getShort(final int index){\n\t\tObject returnable\
+    \ = this.get(index);\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\
+    \t\tif(returnable instanceof String){\n\t\t\t/* A String can be used to construct\
+    \ a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\
+    \t}\n\t\treturn ((Number)returnable).shortValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Boolean, Number, or String value at the given\
+    \ index.\n\t * @param index represents where the value is expected to be at.\n\
+    \t * @return the value at the index provided cast to a String.\n\t * @throws ClassCastException\
+    \ if there was a value but didn't match the assumed return type.\n\t * @throws\
+    \ IndexOutOfBoundsException if the index is outside of the range of element indexes\
+    \ in the JsonArray. */\n\tpublic String getString(final int index){\n\t\tObject\
+    \ returnable = this.get(index);\n\t\tif(returnable instanceof Boolean){\n\t\t\t\
+    returnable = returnable.toString();\n\t\t}else if(returnable instanceof Number){\n\
+    \t\t\treturnable = returnable.toString();\n\t\t}\n\t\treturn (String)returnable;\n\
+    \t}\n\n\t/* (non-Javadoc)\n\t * @see org.json.simple.Jsonable#asJsonString() */\n\
+    \t@Override\n\tpublic String toJson(){\n\t\tfinal StringWriter writable = new\
+    \ StringWriter();\n\t\ttry{\n\t\t\tthis.toJson(writable);\n\t\t}catch(final IOException\
+    \ caught){\n\t\t\t/* See java.io.StringWriter. */\n\t\t}\n\t\treturn writable.toString();\n\
+    \t}\n\n\t/* (non-Javadoc)\n\t * @see org.json.simple.Jsonable#toJsonString(java.io.Writer)\
+    \ */\n\t@Override\n\tpublic void toJson(final Writer writable) throws IOException{\n\
+    \t\tboolean isFirstElement = true;\n\t\tfinal Iterator<Object> elements = this.iterator();\n\
+    \t\twritable.write('[');\n\t\twhile(elements.hasNext()){\n\t\t\tif(isFirstElement){\n\
+    \t\t\t\tisFirstElement = false;\n\t\t\t}else{\n\t\t\t\twritable.write(',');\n\t\
+    \t\t}\n\t\t\twritable.write(Jsoner.serialize(elements.next()));\n\t\t}\n\t\twritable.write(']');\n\
+    \t}\n}\n"
+  learner_created: false
+- name: src/json_simple/Jsoner.java
+  visible: true
+  text: "/* Copyright 2016 Clifton Labs\n * Licensed under the Apache License, Version\
+    \ 2.0 (the \"License\");\n * you may not use this file except in compliance with\
+    \ the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage json_simple;\n\nimport java.io.*;\nimport java.util.*;\n\n/** Jsoner\
+    \ provides JSON utilities for escaping strings to be JSON compatible, thread safe\
+    \ parsing (RFC 7159) JSON\n * strings, and thread safe serializing data to strings\
+    \ in JSON format.\n * @since 2.0.0 */\npublic class Jsoner{\n\t/** Flags to tweak\
+    \ the behavior of the primary deserialization method. */\n\tprivate static enum\
+    \ DeserializationOptions{\n\t\t/** Whether multiple JSON values can be deserialized\
+    \ as a root element. */\n\t\tALLOW_CONCATENATED_JSON_VALUES,\n\t\t/** Whether\
+    \ a JsonArray can be deserialized as a root element. */\n\t\tALLOW_JSON_ARRAYS,\n\
+    \t\t/** Whether a boolean, null, Number, or String can be deserialized as a root\
+    \ element. */\n\t\tALLOW_JSON_DATA,\n\t\t/** Whether a JsonObject can be deserialized\
+    \ as a root element. */\n\t\tALLOW_JSON_OBJECTS;\n\t}\n\n\t/** Flags to tweak\
+    \ the behavior of the primary serialization method. */\n\tprivate static enum\
+    \ SerializationOptions{\n\t\t/** Instead of aborting serialization on non-JSON\
+    \ values it will continue serialization by serializing the\n\t\t * non-JSON value\
+    \ directly into the now invalid JSON. Be mindful that invalid JSON will not successfully\n\
+    \t\t * deserialize. */\n\t\tALLOW_INVALIDS,\n\t\t/** Instead of aborting serialization\
+    \ on non-JSON values that implement Jsonable it will continue serialization\n\t\
+    \t * by deferring serialization to the Jsonable.\n\t\t * @see Jsonable */\n\t\t\
+    ALLOW_JSONABLES;\n\t}\n\n\t/** The possible States of a JSON deserializer. */\n\
+    \tprivate static enum States{\n\t\t/** Post-parsing state. */\n\t\tDONE,\n\t\t\
+    /** Pre-parsing state. */\n\t\tINITIAL,\n\t\t/** Parsing error, ParsingException\
+    \ should be thrown. */\n\t\tPARSED_ERROR,\n\t\t@SuppressWarnings(\"javadoc\")\n\
+    \t\tPARSING_ARRAY,\n\t\t/** Parsing a key-value pair inside of an object. */\n\
+    \t\tPARSING_ENTRY,\n\t\t@SuppressWarnings(\"javadoc\")\n\t\tPARSING_OBJECT;\n\t\
+    }\n\n\t@SuppressWarnings(\"javadoc\")\n\tprivate Jsoner(){\n\t\t/* Jsoner is purely\
+    \ static so instantiation is unnecessary. */\n\t}\n\n\t/** Deserializes a readable\
+    \ stream according to the RFC 7159 JSON specification.\n\t * @param readableDeserializable\
+    \ representing content to be deserialized as JSON.\n\t * @return either a boolean,\
+    \ null, Number, String, JsonObject, or JsonArray that best represents the deserializable.\n\
+    \t * @throws JsonException if an unexpected token is encountered in the deserializable.\
+    \ To recover from a\n\t *         JsonException: fix the deserializable to no\
+    \ longer have an unexpected token and try again. */\n\tpublic static Object deserialize(final\
+    \ Reader readableDeserializable) throws JsonException{\n\t\treturn Jsoner.deserialize(readableDeserializable,\
+    \ EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS, DeserializationOptions.ALLOW_JSON_OBJECTS,\
+    \ DeserializationOptions.ALLOW_JSON_DATA)).get(0);\n\t}\n\n\t/** Deserialize a\
+    \ stream with all deserialized JSON values are wrapped in a JsonArray.\n\t * @param\
+    \ deserializable representing content to be deserialized as JSON.\n\t * @param\
+    \ flags representing the allowances and restrictions on deserialization.\n\t *\
+    \ @return the allowable object best represented by the deserializable.\n\t * @throws\
+    \ JsonException if a disallowed or unexpected token is encountered in the deserializable.\
+    \ To recover from a\n\t *         JsonException: fix the deserializable to no\
+    \ longer have a disallowed or unexpected token and try\n\t *         again. */\n\
+    \tprivate static JsonArray deserialize(final Reader deserializable, final Set<DeserializationOptions>\
+    \ flags) throws JsonException{\n\t\tfinal Yylex lexer = new Yylex(deserializable);\n\
+    \t\tYytoken token;\n\t\tStates currentState;\n\t\tint returnCount = 1;\n\t\tfinal\
+    \ LinkedList<States> stateStack = new LinkedList<>();\n\t\tfinal LinkedList<Object>\
+    \ valueStack = new LinkedList<>();\n\t\tstateStack.addLast(States.INITIAL);\n\t\
+    \tdo{\n\t\t\t/* Parse through the parsable string's tokens. */\n\t\t\tcurrentState\
+    \ = Jsoner.popNextState(stateStack);\n\t\t\ttoken = Jsoner.lexNextToken(lexer);\n\
+    \t\t\tswitch(currentState){\n\t\t\t\tcase DONE:\n\t\t\t\t\t/* The parse has finished\
+    \ a JSON value. */\n\t\t\t\t\tif(!flags.contains(DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES)\
+    \ || Yytoken.Types.END.equals(token.getType())){\n\t\t\t\t\t\t/* Break if concatenated\
+    \ values are not allowed or if an END token is read. */\n\t\t\t\t\t\tbreak;\n\t\
+    \t\t\t\t}\n\t\t\t\t\t/* Increment the amount of returned JSON values and treat\
+    \ the token as if it were a fresh parse. */\n\t\t\t\t\treturnCount += 1;\n\t\t\
+    \t\t\t/* Fall through to the case for the initial state. */\n\t\t\t\t\t//$FALL-THROUGH$\n\
+    \t\t\t\tcase INITIAL:\n\t\t\t\t\t/* The parse has just started. */\n\t\t\t\t\t\
+    switch(token.getType()){\n\t\t\t\t\t\tcase DATUM:\n\t\t\t\t\t\t\t/* A boolean,\
+    \ null, Number, or String could be detected. */\n\t\t\t\t\t\t\tif(flags.contains(DeserializationOptions.ALLOW_JSON_DATA)){\n\
+    \t\t\t\t\t\t\t\tvalueStack.addLast(token.getValue());\n\t\t\t\t\t\t\t\tstateStack.addLast(States.DONE);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.DISALLOWED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tcase LEFT_BRACE:\n\t\t\t\t\t\t\t/* An object is detected.\
+    \ */\n\t\t\t\t\t\t\tif(flags.contains(DeserializationOptions.ALLOW_JSON_OBJECTS)){\n\
+    \t\t\t\t\t\t\t\tvalueStack.addLast(new JsonObject());\n\t\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_OBJECT);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.DISALLOWED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tcase LEFT_SQUARE:\n\t\t\t\t\t\t\t/* An array is detected.\
+    \ */\n\t\t\t\t\t\t\tif(flags.contains(DeserializationOptions.ALLOW_JSON_ARRAYS)){\n\
+    \t\t\t\t\t\t\t\tvalueStack.addLast(new JsonArray());\n\t\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ARRAY);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.DISALLOWED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/* Neither a JSON array or object\
+    \ was detected. */\n\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\
+    \t\t\t\tcase PARSED_ERROR:\n\t\t\t\t\t/* The parse could be in this state due\
+    \ to the state stack not having a state to pop off. */\n\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\tcase PARSING_ARRAY:\n\
+    \t\t\t\t\tswitch(token.getType()){\n\t\t\t\t\t\tcase COMMA:\n\t\t\t\t\t\t\t/*\
+    \ The parse could detect a comma while parsing an array since it separates each\
+    \ element. */\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\t\
+    break;\n\t\t\t\t\t\tcase DATUM:\n\t\t\t\t\t\t\t/* The parse found an element of\
+    \ the array. */\n\t\t\t\t\t\t\tJsonArray val = (JsonArray)valueStack.getLast();\n\
+    \t\t\t\t\t\t\tval.add(token.getValue());\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\
+    \t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase LEFT_BRACE:\n\t\t\t\t\t\t\t/* The parse\
+    \ found an object in the array. */\n\t\t\t\t\t\t\tval = (JsonArray)valueStack.getLast();\n\
+    \t\t\t\t\t\t\tfinal JsonObject object = new JsonObject();\n\t\t\t\t\t\t\tval.add(object);\n\
+    \t\t\t\t\t\t\tvalueStack.addLast(object);\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\
+    \t\t\t\t\t\t\tstateStack.addLast(States.PARSING_OBJECT);\n\t\t\t\t\t\t\tbreak;\n\
+    \t\t\t\t\t\tcase LEFT_SQUARE:\n\t\t\t\t\t\t\t/* The parse found another array\
+    \ in the array. */\n\t\t\t\t\t\t\tval = (JsonArray)valueStack.getLast();\n\t\t\
+    \t\t\t\t\tfinal JsonArray array = new JsonArray();\n\t\t\t\t\t\t\tval.add(array);\n\
+    \t\t\t\t\t\t\tvalueStack.addLast(array);\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\
+    \t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ARRAY);\n\t\t\t\t\t\t\tbreak;\n\
+    \t\t\t\t\t\tcase RIGHT_SQUARE:\n\t\t\t\t\t\t\t/* The parse found the end of the\
+    \ array. */\n\t\t\t\t\t\t\tif(valueStack.size() > returnCount){\n\t\t\t\t\t\t\t\
+    \tvalueStack.removeLast();\n\t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\t/* The parse\
+    \ has been fully resolved. */\n\t\t\t\t\t\t\t\tstateStack.addLast(States.DONE);\n\
+    \t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/*\
+    \ Any other token is invalid in an array. */\n\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\
+    \t\t\t\tcase PARSING_OBJECT:\n\t\t\t\t\t/* The parse has detected the start of\
+    \ an object. */\n\t\t\t\t\tswitch(token.getType()){\n\t\t\t\t\t\tcase COMMA:\n\
+    \t\t\t\t\t\t\t/* The parse could detect a comma while parsing an object since\
+    \ it separates each key value\n\t\t\t\t\t\t\t * pair. Continue parsing the object.\
+    \ */\n\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\tbreak;\n\t\
+    \t\t\t\t\tcase DATUM:\n\t\t\t\t\t\t\t/* The token ought to be a key. */\n\t\t\t\
+    \t\t\t\tif(token.getValue() instanceof String){\n\t\t\t\t\t\t\t\t/* JSON keys\
+    \ are always strings, strings are not always JSON keys but it is going to be\n\
+    \t\t\t\t\t\t\t\t * treated as one. Continue parsing the object. */\n\t\t\t\t\t\
+    \t\t\tfinal String key = (String)token.getValue();\n\t\t\t\t\t\t\t\tvalueStack.addLast(key);\n\
+    \t\t\t\t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ENTRY);\n\
+    \t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\t/* Abort! JSON keys are always strings and\
+    \ it wasn't a string. */\n\t\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\
+    \t\tbreak;\n\t\t\t\t\t\tcase RIGHT_BRACE:\n\t\t\t\t\t\t\t/* The parse has found\
+    \ the end of the object. */\n\t\t\t\t\t\t\tif(valueStack.size() > returnCount){\n\
+    \t\t\t\t\t\t\t\t/* There are unresolved values remaining. */\n\t\t\t\t\t\t\t\t\
+    valueStack.removeLast();\n\t\t\t\t\t\t\t}else{\n\t\t\t\t\t\t\t\t/* The parse has\
+    \ been fully resolved. */\n\t\t\t\t\t\t\t\tstateStack.addLast(States.DONE);\n\t\
+    \t\t\t\t\t\t}\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/* The\
+    \ parse didn't detect the end of an object or a key. */\n\t\t\t\t\t\t\tthrow new\
+    \ JsonException(lexer.getPosition(), JsonException.Problems.UNEXPECTED_TOKEN,\
+    \ token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\t\tcase PARSING_ENTRY:\n\t\t\t\t\
+    \tswitch(token.getType()){\n\t\t\t\t\t\t/* Parsed pair keys can only happen while\
+    \ parsing objects. */\n\t\t\t\t\t\tcase COLON:\n\t\t\t\t\t\t\t/* The parse could\
+    \ detect a colon while parsing a key value pair since it separates the key\n\t\
+    \t\t\t\t\t\t * and value from each other. Continue parsing the entry. */\n\t\t\
+    \t\t\t\t\tstateStack.addLast(currentState);\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\t\
+    case DATUM:\n\t\t\t\t\t\t\t/* The parse has found a value for the parsed pair\
+    \ key. */\n\t\t\t\t\t\t\tString key = (String)valueStack.removeLast();\n\t\t\t\
+    \t\t\t\tJsonObject parent = (JsonObject)valueStack.getLast();\n\t\t\t\t\t\t\t\
+    parent.put(key, token.getValue());\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase LEFT_BRACE:\n\
+    \t\t\t\t\t\t\t/* The parse has found an object for the parsed pair key. */\n\t\
+    \t\t\t\t\t\tkey = (String)valueStack.removeLast();\n\t\t\t\t\t\t\tparent = (JsonObject)valueStack.getLast();\n\
+    \t\t\t\t\t\t\tfinal JsonObject object = new JsonObject();\n\t\t\t\t\t\t\tparent.put(key,\
+    \ object);\n\t\t\t\t\t\t\tvalueStack.addLast(object);\n\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_OBJECT);\n\
+    \t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase LEFT_SQUARE:\n\t\t\t\t\t\t\t/* The parse\
+    \ has found an array for the parsed pair key. */\n\t\t\t\t\t\t\tkey = (String)valueStack.removeLast();\n\
+    \t\t\t\t\t\t\tparent = (JsonObject)valueStack.getLast();\n\t\t\t\t\t\t\tfinal\
+    \ JsonArray array = new JsonArray();\n\t\t\t\t\t\t\tparent.put(key, array);\n\t\
+    \t\t\t\t\t\tvalueStack.addLast(array);\n\t\t\t\t\t\t\tstateStack.addLast(States.PARSING_ARRAY);\n\
+    \t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\t/* The parse didn't\
+    \ find anything for the parsed pair key. */\n\t\t\t\t\t\t\tthrow new JsonException(lexer.getPosition(),\
+    \ JsonException.Problems.UNEXPECTED_TOKEN, token);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\
+    \t\t\t\tdefault:\n\t\t\t\t\tbreak;\n\t\t\t}\n\t\t\t/* If we're not at the END\
+    \ and DONE then do the above again. */\n\t\t}while(!(States.DONE.equals(currentState)\
+    \ && Yytoken.Types.END.equals(token.getType())));\n\t\treturn new JsonArray(valueStack);\n\
+    \t}\n\n\t/** A convenience method that assumes a StringReader to deserialize a\
+    \ string.\n\t * @param deserializable representing content to be deserialized\
+    \ as JSON.\n\t * @return either a boolean, null, Number, String, JsonObject, or\
+    \ JsonArray that best represents the deserializable.\n\t * @throws JsonException\
+    \ if an unexpected token is encountered in the deserializable. To recover from\
+    \ a\n\t *         JsonException: fix the deserializable to no longer have an unexpected\
+    \ token and try again.\n\t * @see Jsoner#deserialize(Reader)\n\t * @see StringReader\
+    \ */\n\tpublic static Object deserialize(final String deserializable) throws JsonException{\n\
+    \t\tObject returnable;\n\t\tStringReader readableDeserializable = null;\n\t\t\
+    try{\n\t\t\treadableDeserializable = new StringReader(deserializable);\n\t\t\t\
+    returnable = Jsoner.deserialize(readableDeserializable);\n\t\t}catch(final NullPointerException\
+    \ caught){\n\t\t\t/* They both have the same recovery scenario.\n\t\t\t * See\
+    \ StringReader.\n\t\t\t * If deserializable is null, it should be reasonable to\
+    \ expect null back. */\n\t\t\treturnable = null;\n\t\t}finally{\n\t\t\tif(readableDeserializable\
+    \ != null){\n\t\t\t\treadableDeserializable.close();\n\t\t\t}\n\t\t}\n\t\treturn\
+    \ returnable;\n\t}\n\n\t/** A convenience method that assumes a JsonArray must\
+    \ be deserialized.\n\t * @param deserializable representing content to be deserializable\
+    \ as a JsonArray.\n\t * @param defaultValue representing what would be returned\
+    \ if deserializable isn't a JsonArray or an IOException,\n\t *        NullPointerException,\
+    \ or JsonException occurs during deserialization.\n\t * @return a JsonArray that\
+    \ represents the deserializable, or the defaultValue if there isn't a JsonArray\
+    \ that\n\t *         represents deserializable.\n\t * @see Jsoner#deserialize(Reader)\
+    \ */\n\tpublic static JsonArray deserialize(final String deserializable, final\
+    \ JsonArray defaultValue){\n\t\tStringReader readable = null;\n\t\tJsonArray returnable;\n\
+    \t\ttry{\n\t\t\treadable = new StringReader(deserializable);\n\t\t\treturnable\
+    \ = Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS)).<JsonArray>\
+    \ getCollection(0);\n\t\t}catch(NullPointerException | JsonException caught){\n\
+    \t\t\t/* Don't care, just return the default value. */\n\t\t\treturnable = defaultValue;\n\
+    \t\t}finally{\n\t\t\tif(readable != null){\n\t\t\t\treadable.close();\n\t\t\t\
+    }\n\t\t}\n\t\treturn returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ a JsonObject must be deserialized.\n\t * @param deserializable representing\
+    \ content to be deserializable as a JsonObject.\n\t * @param defaultValue representing\
+    \ what would be returned if deserializable isn't a JsonObject or an IOException,\n\
+    \t *        NullPointerException, or JsonException occurs during deserialization.\n\
+    \t * @return a JsonObject that represents the deserializable, or the defaultValue\
+    \ if there isn't a JsonObject that\n\t *         represents deserializable.\n\t\
+    \ * @see Jsoner#deserialize(Reader) */\n\tpublic static JsonObject deserialize(final\
+    \ String deserializable, final JsonObject defaultValue){\n\t\tStringReader readable\
+    \ = null;\n\t\tJsonObject returnable;\n\t\ttry{\n\t\t\treadable = new StringReader(deserializable);\n\
+    \t\t\treturnable = Jsoner.deserialize(readable, EnumSet.of(DeserializationOptions.ALLOW_JSON_OBJECTS)).<JsonObject>\
+    \ getMap(0);\n\t\t}catch(NullPointerException | JsonException caught){\n\t\t\t\
+    /* Don't care, just return the default value. */\n\t\t\treturnable = defaultValue;\n\
+    \t\t}finally{\n\t\t\tif(readable != null){\n\t\t\t\treadable.close();\n\t\t\t\
+    }\n\t\t}\n\t\treturn returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ multiple RFC 7159 JSON values (except numbers) have been concatenated together\n\
+    \t * for deserilization which will be collectively returned in a JsonArray wrapper.\n\
+    \t * There may be numbers included, they just must not be concatenated together\
+    \ as it is prone to\n\t * NumberFormatExceptions (thus causing a JsonException)\
+    \ or the numbers no longer represent their\n\t * respective values.\n\t * Examples:\n\
+    \t * \"123null321\" returns [123, null, 321]\n\t * \"nullnullnulltruefalse\\\"\
+    \\\"{}[]\" returns [null, null, null, true, false, \"\", {}, []]\n\t * \"123\"\
+    \ appended to \"321\" returns [123321]\n\t * \"12.3\" appended to \"3.21\" throws\
+    \ JsonException(NumberFormatException)\n\t * \"123\" appended to \"-321\" throws\
+    \ JsonException(NumberFormatException)\n\t * \"123e321\" appended to \"-1\" throws\
+    \ JsonException(NumberFormatException)\n\t * \"null12.33.21null\" throws JsonException(NumberFormatException)\n\
+    \t * @param deserializable representing concatenated content to be deserialized\
+    \ as JSON in one reader. Its contents\n\t *        may not contain two numbers\
+    \ concatenated together.\n\t * @return a JsonArray that contains each of the concatenated\
+    \ objects as its elements. Each concatenated element is\n\t *         either a\
+    \ boolean, null, Number, String, JsonArray, or JsonObject that best represents\
+    \ the concatenated\n\t *         content inside deserializable.\n\t * @throws\
+    \ JsonException if an unexpected token is encountered in the deserializable. To\
+    \ recover from a\n\t *         JsonException: fix the deserializable to no longer\
+    \ have an unexpected token and try again. */\n\tpublic static JsonArray deserializeMany(final\
+    \ Reader deserializable) throws JsonException{\n\t\treturn Jsoner.deserialize(deserializable,\
+    \ EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS, DeserializationOptions.ALLOW_JSON_OBJECTS,\
+    \ DeserializationOptions.ALLOW_JSON_DATA, DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES));\n\
+    \t}\n\n\t/** Escapes potentially confusing or important characters in the String\
+    \ provided.\n\t * @param escapable an unescaped string.\n\t * @return an escaped\
+    \ string for usage in JSON; An escaped string is one that has escaped all of the\
+    \ quotes (\"),\n\t *         backslashes (\\), return character (\\r), new line\
+    \ character (\\n), tab character (\\t),\n\t *         backspace character (\\\
+    b), form feed character (\\f) and other control characters [u0000..u001F] or\n\
+    \t *         characters [u007F..u009F], [u2000..u20FF] with a\n\t *         backslash\
+    \ (\\) which itself must be escaped by the backslash in a java string. */\n\t\
+    public static String escape(final String escapable){\n\t\tfinal StringBuilder\
+    \ builder = new StringBuilder();\n\t\tfinal int characters = escapable.length();\n\
+    \t\tfor(int i = 0; i < characters; i++){\n\t\t\tfinal char character = escapable.charAt(i);\n\
+    \t\t\tswitch(character){\n\t\t\t\tcase '\"':\n\t\t\t\t\tbuilder.append(\"\\\\\\\
+    \"\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\\\':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    \\\\\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\b':\n\t\t\t\t\tbuilder.append(\"\\\
+    \\b\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\f':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    f\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\n':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    n\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\r':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    r\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '\\t':\n\t\t\t\t\tbuilder.append(\"\\\\\
+    t\");\n\t\t\t\t\tbreak;\n\t\t\t\tcase '/':\n\t\t\t\t\tbuilder.append(\"\\\\/\"\
+    );\n\t\t\t\t\tbreak;\n\t\t\t\tdefault:\n\t\t\t\t\t/* The many characters that\
+    \ get replaced are benign to software but could be mistaken by people\n\t\t\t\t\
+    \t * reading it for a JSON relevant character. */\n\t\t\t\t\tif(((character >=\
+    \ '\\u0000') && (character <= '\\u001F')) || ((character >= '\\u007F') && (character\
+    \ <= '\\u009F')) || ((character >= '\\u2000') && (character <= '\\u20FF'))){\n\
+    \t\t\t\t\t\tfinal String characterHexCode = Integer.toHexString(character);\n\t\
+    \t\t\t\t\tbuilder.append(\"\\\\u\");\n\t\t\t\t\t\tfor(int k = 0; k < (4 - characterHexCode.length());\
+    \ k++){\n\t\t\t\t\t\t\tbuilder.append(\"0\");\n\t\t\t\t\t\t}\n\t\t\t\t\t\tbuilder.append(characterHexCode.toUpperCase());\n\
+    \t\t\t\t\t}else{\n\t\t\t\t\t\t/* Character didn't need escaping. */\n\t\t\t\t\t\
+    \tbuilder.append(character);\n\t\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn builder.toString();\n\
+    \t}\n\n\t/** Processes the lexer's reader for the next token.\n\t * @param lexer\
+    \ represents a text processor being used in the deserialization process.\n\t *\
+    \ @return a token representing a meaningful element encountered by the lexer.\n\
+    \t * @throws JsonException if an unexpected character is encountered while processing\
+    \ the text. */\n\tprivate static Yytoken lexNextToken(final Yylex lexer) throws\
+    \ JsonException{\n\t\tYytoken returnable;\n\t\t/* Parse through the next token.\
+    \ */\n\t\ttry{\n\t\t\treturnable = lexer.yylex();\n\t\t}catch(final IOException\
+    \ caught){\n\t\t\tthrow new JsonException(-1, JsonException.Problems.UNEXPECTED_EXCEPTION,\
+    \ caught);\n\t\t}\n\t\tif(returnable == null){\n\t\t\t/* If there isn't another\
+    \ token, it must be the end. */\n\t\t\treturnable = new Yytoken(Yytoken.Types.END,\
+    \ null);\n\t\t}\n\t\treturn returnable;\n\t}\n\n\t/** Creates a new JsonKey that\
+    \ wraps the given string and value. This function should NOT be\n\t * used in\
+    \ favor of existing constants and enumerations to make code easier to maintain.\n\
+    \t * @param key represents the JsonKey as a String.\n\t * @param value represents\
+    \ the value the JsonKey uses.\n\t * @return a JsonKey that represents the provided\
+    \ key and value. */\n\tpublic static JsonKey mintJsonKey(final String key, final\
+    \ Object value){\n\t\treturn new JsonKey(){\n\t\t\t@Override\n\t\t\tpublic String\
+    \ getKey(){\n\t\t\t\treturn key;\n\t\t\t}\n\n\t\t\t@Override\n\t\t\tpublic Object\
+    \ getValue(){\n\t\t\t\treturn value;\n\t\t\t}\n\t\t};\n\t}\n\n\t/** Used for state\
+    \ transitions while deserializing.\n\t * @param stateStack represents the deserialization\
+    \ states saved for future processing.\n\t * @return a state for deserialization\
+    \ context so it knows how to consume the next token. */\n\tprivate static States\
+    \ popNextState(final LinkedList<States> stateStack){\n\t\tif(stateStack.size()\
+    \ > 0){\n\t\t\treturn stateStack.removeLast();\n\t\t}else{\n\t\t\treturn States.PARSED_ERROR;\n\
+    \t\t}\n\t}\n\n\t/** Makes the JSON input more easily human readable using indentation\
+    \ and newline of the caller's choice. This means\n\t * the validity of the JSON\
+    \ printed by this method is dependent on the caller's choice of indentation and\
+    \ newlines.\n\t * @param readable representing a JSON formatted string with out\
+    \ extraneous characters, like one returned from\n\t *        Jsoner#serialize(Object).\n\
+    \t * @param writable represents where the pretty printed JSON should be written\
+    \ to.\n\t * @param indentation representing the indentation used to format the\
+    \ JSON string. NOT validated as a proper\n\t *        indentation. It is recommended\
+    \ to use tabs (\"\\t\"), but 3, 4, or 8 spaces are common alternatives.\n\t *\
+    \ @param newline representing the newline used to format the JSON string. NOT\
+    \ validated as a proper newline. It is\n\t *        recommended to use \"\\n\"\
+    , but \"\\r\" or \"/r/n\" are common alternatives.\n\t * @throws IOException if\
+    \ the provided writer encounters an IO issue.\n\t * @throws JsonException if the\
+    \ provided reader encounters an IO issue.\n\t * @see Jsoner#prettyPrint(String)\n\
+    \t * @since 3.1.0 made public to allow large JSON inputs and more pretty print\
+    \ control. */\n\tpublic static void prettyPrint(final Reader readable, final Writer\
+    \ writable, final String indentation, final String newline) throws IOException,\
+    \ JsonException{\n\t\tfinal Yylex lexer = new Yylex(readable);\n\t\tYytoken lexed;\n\
+    \t\tint level = 0;\n\t\tdo{\n\t\t\tlexed = Jsoner.lexNextToken(lexer);\n\t\t\t\
+    switch(lexed.getType()){\n\t\t\t\tcase COLON:\n\t\t\t\t\twritable.append(lexed.getValue().toString());\n\
+    \t\t\t\t\tbreak;\n\t\t\t\tcase COMMA:\n\t\t\t\t\twritable.append(lexed.getValue().toString());\n\
+    \t\t\t\t\twritable.append(newline);\n\t\t\t\t\tfor(int i = 0; i < level; i++){\n\
+    \t\t\t\t\t\twritable.append(indentation);\n\t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\
+    \t\tcase END:\n\t\t\t\t\tbreak;\n\t\t\t\tcase LEFT_BRACE:\n\t\t\t\tcase LEFT_SQUARE:\n\
+    \t\t\t\t\twritable.append(lexed.getValue().toString());\n\t\t\t\t\twritable.append(newline);\n\
+    \t\t\t\t\tlevel++;\n\t\t\t\t\tfor(int i = 0; i < level; i++){\n\t\t\t\t\t\twritable.append(indentation);\n\
+    \t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\t\tcase RIGHT_BRACE:\n\t\t\t\tcase RIGHT_SQUARE:\n\
+    \t\t\t\t\twritable.append(newline);\n\t\t\t\t\tlevel--;\n\t\t\t\t\tfor(int i =\
+    \ 0; i < level; i++){\n\t\t\t\t\t\twritable.append(indentation);\n\t\t\t\t\t}\n\
+    \t\t\t\t\twritable.append(lexed.getValue().toString());\n\t\t\t\t\tbreak;\n\t\t\
+    \t\tdefault:\n\t\t\t\t\tif(lexed.getValue() == null){\n\t\t\t\t\t\twritable.append(\"\
+    null\");\n\t\t\t\t\t}else if(lexed.getValue() instanceof String){\n\t\t\t\t\t\t\
+    writable.append(\"\\\"\");\n\t\t\t\t\t\twritable.append(Jsoner.escape((String)lexed.getValue()));\n\
+    \t\t\t\t\t\twritable.append(\"\\\"\");\n\t\t\t\t\t}else{\n\t\t\t\t\t\twritable.append(lexed.getValue().toString());\n\
+    \t\t\t\t\t}\n\t\t\t\t\tbreak;\n\t\t\t}\n\t\t}while(!lexed.getType().equals(Yytoken.Types.END));\n\
+    \t\twritable.flush();\n\t}\n\n\t/** A convenience method to pretty print a String\
+    \ with tabs (\"\\t\") and \"\\n\" for newlines.\n\t * @param printable representing\
+    \ a JSON formatted string with out extraneous characters, like one returned from\n\
+    \t *        Jsoner#serialize(Object).\n\t * @return printable except it will have\
+    \ '\\n' then '\\t' characters inserted after '[', '{', ',' and before ']' '}'\n\
+    \t *         tokens in the JSON. It will return null if printable isn't a JSON\
+    \ string. */\n\tpublic static String prettyPrint(final String printable){\n\t\t\
+    final StringWriter writer = new StringWriter();\n\t\ttry{\n\t\t\tJsoner.prettyPrint(new\
+    \ StringReader(printable), writer, \"\\t\", \"\\n\");\n\t\t}catch(final IOException\
+    \ caught){\n\t\t\t/* See java.io.StringReader.\n\t\t\t * See java.io.StringWriter.\
+    \ */\n\t\t}catch(final JsonException caught){\n\t\t\t/* Would have been caused\
+    \ by a an IO exception while lexing, but the StringReader does not throw them.\
+    \ See\n\t\t\t * java.io.StringReader. */\n\t\t}\n\t\treturn writer.toString();\n\
+    \t}\n\n\t/** A convenience method to pretty print a String with the provided spaces\
+    \ count and \"\\n\" for newlines.\n\t * @param printable representing a JSON formatted\
+    \ string with out extraneous characters, like one returned from\n\t *        Jsoner#serialize(Object).\n\
+    \t * @param spaces representing the amount of spaces to use for indentation. Must\
+    \ be between 2 and 10.\n\t * @return printable except it will have '\\n' then\
+    \ space characters inserted after '[', '{', ',' and before ']' '}'\n\t *     \
+    \    tokens in the JSON. It will return null if printable isn't a JSON string.\n\
+    \t * @throws IllegalArgumentException if spaces isn't between [2..10].\n\t * @see\
+    \ Jsoner#prettyPrint(String)\n\t * @since 2.2.0 to allow pretty printing with\
+    \ spaces instead of tabs.\n\t * @deprecated 3.1.0 in favor of Jsoner#prettyPrint(Reader,\
+    \ Writer, String, String) due to arbitrary limitations\n\t *             enforced\
+    \ by this implementation. */\n\t@Deprecated\n\tpublic static String prettyPrint(final\
+    \ String printable, final int spaces){\n\t\tif((spaces > 10) || (spaces < 2)){\n\
+    \t\t\tthrow new IllegalArgumentException(\"Indentation with spaces must be between\
+    \ 2 and 10.\");\n\t\t}\n\t\tfinal StringBuilder indentation = new StringBuilder(\"\
+    \");\n\t\tfinal StringWriter writer = new StringWriter();\n\t\tfor(int i = 0;\
+    \ i < spaces; i++){\n\t\t\tindentation.append(\" \");\n\t\t}\n\t\ttry{\n\t\t\t\
+    Jsoner.prettyPrint(new StringReader(printable), writer, indentation.toString(),\
+    \ \"\\n\");\n\t\t}catch(final IOException caught){\n\t\t\t/* See java.io.StringReader.\n\
+    \t\t\t * See java.io.StringWriter. */\n\t\t}catch(final JsonException caught){\n\
+    \t\t\t/* Would have been caused by a an IO exception while lexing, but the StringReader\
+    \ does not throw them. See\n\t\t\t * java.io.StringReader. */\n\t\t}\n\t\treturn\
+    \ writer.toString();\n\t}\n\n\t/** A convenience method that assumes a StringWriter.\n\
+    \t * @param jsonSerializable represents the object that should be serialized as\
+    \ a string in JSON format.\n\t * @return a string, in JSON format, that represents\
+    \ the object provided.\n\t * @throws IllegalArgumentException if the jsonSerializable\
+    \ isn't serializable in JSON.\n\t * @see Jsoner#serialize(Object, Writer)\n\t\
+    \ * @see StringWriter */\n\tpublic static String serialize(final Object jsonSerializable){\n\
+    \t\tfinal StringWriter writableDestination = new StringWriter();\n\t\ttry{\n\t\
+    \t\tJsoner.serialize(jsonSerializable, writableDestination);\n\t\t}catch(final\
+    \ IOException caught){\n\t\t\t/* See java.io.StringWriter. */\n\t\t}\n\t\treturn\
+    \ writableDestination.toString();\n\t}\n\n\t/** Serializes values according to\
+    \ the RFC 7159 JSON specification. It will also trust the serialization provided\
+    \ by\n\t * any Jsonables it serializes.\n\t * @param jsonSerializable represents\
+    \ the object that should be serialized in JSON format.\n\t * @param writableDestination\
+    \ represents where the resulting JSON text is written to.\n\t * @throws IOException\
+    \ if the writableDestination encounters an I/O problem, like being closed while\
+    \ in use.\n\t * @throws IllegalArgumentException if the jsonSerializable isn't\
+    \ serializable in JSON. */\n\tpublic static void serialize(final Object jsonSerializable,\
+    \ final Writer writableDestination) throws IOException{\n\t\tJsoner.serialize(jsonSerializable,\
+    \ writableDestination, EnumSet.of(SerializationOptions.ALLOW_JSONABLES));\n\t\
+    }\n\n\t/** Serialize values to JSON and write them to the provided writer based\
+    \ on behavior flags.\n\t * @param jsonSerializable represents the object that\
+    \ should be serialized to a string in JSON format.\n\t * @param writableDestination\
+    \ represents where the resulting JSON text is written to.\n\t * @param flags represents\
+    \ the allowances and restrictions on serialization.\n\t * @throws IOException\
+    \ if the writableDestination encounters an I/O problem.\n\t * @throws IllegalArgumentException\
+    \ if the jsonSerializable isn't serializable in JSON.\n\t * @see SerializationOptions\
+    \ */\n\tprivate static void serialize(final Object jsonSerializable, final Writer\
+    \ writableDestination, final Set<SerializationOptions> flags) throws IOException{\n\
+    \t\tif(jsonSerializable == null){\n\t\t\t/* When a null is passed in the word\
+    \ null is supported in JSON. */\n\t\t\twritableDestination.write(\"null\");\n\t\
+    \t}else if(((jsonSerializable instanceof Jsonable) && flags.contains(SerializationOptions.ALLOW_JSONABLES))){\n\
+    \t\t\t/* Writes the writable as defined by the writable. */\n\t\t\twritableDestination.write(((Jsonable)jsonSerializable).toJson());\n\
+    \t\t}else if(jsonSerializable instanceof String){\n\t\t\t/* Make sure the string\
+    \ is properly escaped. */\n\t\t\twritableDestination.write('\"');\n\t\t\twritableDestination.write(Jsoner.escape((String)jsonSerializable));\n\
+    \t\t\twritableDestination.write('\"');\n\t\t}else if(jsonSerializable instanceof\
+    \ Character){\n\t\t\t/* Make sure the string is properly escaped.\n\t\t\t * Quotes\
+    \ for some reason are necessary for String, but not Character. */\n\t\t\twritableDestination.write(Jsoner.escape(jsonSerializable.toString()));\n\
+    \t\t}else if(jsonSerializable instanceof Double){\n\t\t\tif(((Double)jsonSerializable).isInfinite()\
+    \ || ((Double)jsonSerializable).isNaN()){\n\t\t\t\t/* Infinite and not a number\
+    \ are not supported by the JSON specification, so null is used instead. */\n\t\
+    \t\t\twritableDestination.write(\"null\");\n\t\t\t}else{\n\t\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t\t}\n\t\t}else if(jsonSerializable instanceof Float){\n\t\t\tif(((Float)jsonSerializable).isInfinite()\
+    \ || ((Float)jsonSerializable).isNaN()){\n\t\t\t\t/* Infinite and not a number\
+    \ are not supported by the JSON specification, so null is used instead. */\n\t\
+    \t\t\twritableDestination.write(\"null\");\n\t\t\t}else{\n\t\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t\t}\n\t\t}else if(jsonSerializable instanceof Number){\n\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t}else if(jsonSerializable instanceof Boolean){\n\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t}else if(jsonSerializable instanceof Map){\n\t\t\t/* Writes the map in JSON\
+    \ object format. */\n\t\t\tboolean isFirstEntry = true;\n\t\t\t@SuppressWarnings(\"\
+    rawtypes\")\n\t\t\tfinal Iterator entries = ((Map)jsonSerializable).entrySet().iterator();\n\
+    \t\t\twritableDestination.write('{');\n\t\t\twhile(entries.hasNext()){\n\t\t\t\
+    \tif(isFirstEntry){\n\t\t\t\t\tisFirstEntry = false;\n\t\t\t\t}else{\n\t\t\t\t\
+    \twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t\t@SuppressWarnings(\"rawtypes\"\
+    )\n\t\t\t\tfinal Map.Entry entry = (Map.Entry)entries.next();\n\t\t\t\tJsoner.serialize(entry.getKey(),\
+    \ writableDestination, flags);\n\t\t\t\twritableDestination.write(':');\n\t\t\t\
+    \tJsoner.serialize(entry.getValue(), writableDestination, flags);\n\t\t\t}\n\t\
+    \t\twritableDestination.write('}');\n\t\t}else if(jsonSerializable instanceof\
+    \ Collection){\n\t\t\t/* Writes the collection in JSON array format. */\n\t\t\t\
+    boolean isFirstElement = true;\n\t\t\t@SuppressWarnings(\"rawtypes\")\n\t\t\t\
+    final Iterator elements = ((Collection)jsonSerializable).iterator();\n\t\t\twritableDestination.write('[');\n\
+    \t\t\twhile(elements.hasNext()){\n\t\t\t\tif(isFirstElement){\n\t\t\t\t\tisFirstElement\
+    \ = false;\n\t\t\t\t}else{\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t\
+    }\n\t\t\t\tJsoner.serialize(elements.next(), writableDestination, flags);\n\t\t\
+    \t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof\
+    \ byte[]){\n\t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal byte[]\
+    \ writableArray = (byte[])jsonSerializable;\n\t\t\tfinal int numberOfElements\
+    \ = writableArray.length;\n\t\t\twritableDestination.write('[');\n\t\t\tfor(int\
+    \ i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\
+    \t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\t\t\
+    \t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof short[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal short[] writableArray\
+    \ = (short[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write('[');\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\
+    \t\t}\n\t\t\t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable\
+    \ instanceof int[]){\n\t\t\t/* Writes the array in JSON array format. */\n\t\t\
+    \tfinal int[] writableArray = (int[])jsonSerializable;\n\t\t\tfinal int numberOfElements\
+    \ = writableArray.length;\n\t\t\twritableDestination.write('[');\n\t\t\tfor(int\
+    \ i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\
+    \t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\t\t\
+    \t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof long[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal long[] writableArray\
+    \ = (long[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write('[');\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\
+    \t\t}\n\t\t\t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable\
+    \ instanceof float[]){\n\t\t\t/* Writes the array in JSON array format. */\n\t\
+    \t\tfinal float[] writableArray = (float[])jsonSerializable;\n\t\t\tfinal int\
+    \ numberOfElements = writableArray.length;\n\t\t\twritableDestination.write('[');\n\
+    \t\t\tfor(int i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements\
+    \ - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\
+    \t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof double[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal double[] writableArray\
+    \ = (double[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write('[');\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\
+    \t\t}\n\t\t\t}\n\t\t\twritableDestination.write(']');\n\t\t}else if(jsonSerializable\
+    \ instanceof boolean[]){\n\t\t\t/* Writes the array in JSON array format. */\n\
+    \t\t\tfinal boolean[] writableArray = (boolean[])jsonSerializable;\n\t\t\tfinal\
+    \ int numberOfElements = writableArray.length;\n\t\t\twritableDestination.write('[');\n\
+    \t\t\tfor(int i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements\
+    \ - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\
+    \t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(',');\n\t\t\t\t}\n\t\t\t}\n\t\t\
+    \twritableDestination.write(']');\n\t\t}else if(jsonSerializable instanceof char[]){\n\
+    \t\t\t/* Writes the array in JSON array format. */\n\t\t\tfinal char[] writableArray\
+    \ = (char[])jsonSerializable;\n\t\t\tfinal int numberOfElements = writableArray.length;\n\
+    \t\t\twritableDestination.write(\"[\\\"\");\n\t\t\tfor(int i = 0; i < numberOfElements;\
+    \ i++){\n\t\t\t\tif(i == (numberOfElements - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i],\
+    \ writableDestination, flags);\n\t\t\t\t\twritableDestination.write(\"\\\",\\\"\
+    \");\n\t\t\t\t}\n\t\t\t}\n\t\t\twritableDestination.write(\"\\\"]\");\n\t\t}else\
+    \ if(jsonSerializable instanceof Object[]){\n\t\t\t/* Writes the array in JSON\
+    \ array format. */\n\t\t\tfinal Object[] writableArray = (Object[])jsonSerializable;\n\
+    \t\t\tfinal int numberOfElements = writableArray.length;\n\t\t\twritableDestination.write('[');\n\
+    \t\t\tfor(int i = 0; i < numberOfElements; i++){\n\t\t\t\tif(i == (numberOfElements\
+    \ - 1)){\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination, flags);\n\
+    \t\t\t\t}else{\n\t\t\t\t\tJsoner.serialize(writableArray[i], writableDestination,\
+    \ flags);\n\t\t\t\t\twritableDestination.write(\",\");\n\t\t\t\t}\n\t\t\t}\n\t\
+    \t\twritableDestination.write(']');\n\t\t}else{\n\t\t\t/* It cannot by any measure\
+    \ be safely serialized according to specification. */\n\t\t\tif(flags.contains(SerializationOptions.ALLOW_INVALIDS)){\n\
+    \t\t\t\t/* Can be helpful for debugging how it isn't valid. */\n\t\t\t\twritableDestination.write(jsonSerializable.toString());\n\
+    \t\t\t}else{\n\t\t\t\t/* Notify the caller the cause of failure for the serialization.\
+    \ */\n\t\t\t\tthrow new IllegalArgumentException(\"Encountered a: \" + jsonSerializable.getClass().getName()\
+    \ + \" as: \" + jsonSerializable.toString() + \"  that isn't JSON serializable.\\\
+    n  Try:\\n    1) Implementing the Jsonable interface for the object to return\
+    \ valid JSON. If it already does it probably has a bug.\\n    2) If you cannot\
+    \ edit the source of the object or couple it with this library consider wrapping\
+    \ it in a class that does implement the Jsonable interface.\\n    3) Otherwise\
+    \ convert it to a boolean, null, number, JsonArray, JsonObject, or String value\
+    \ before serializing it.\\n    4) If you feel it should have serialized you could\
+    \ use a more tolerant serialization for debugging purposes.\");\n\t\t\t}\n\t\t\
+    }\n\t}\n\n\t/** Serializes like the first version of this library.\n\t * It has\
+    \ been adapted to use Jsonable for serializing custom objects, but otherwise works\
+    \ like the old JSON string\n\t * serializer. It will allow non-JSON values in\
+    \ its output like the old one. It can be helpful for last resort log\n\t * statements\
+    \ and debugging errors in self generated JSON. Anything serialized using this\
+    \ method isn't guaranteed to\n\t * be deserializable.\n\t * @param jsonSerializable\
+    \ represents the object that should be serialized in JSON format.\n\t * @param\
+    \ writableDestination represents where the resulting JSON text is written to.\n\
+    \t * @throws IOException if the writableDestination encounters an I/O problem,\
+    \ like being closed while in use. */\n\tpublic static void serializeCarelessly(final\
+    \ Object jsonSerializable, final Writer writableDestination) throws IOException{\n\
+    \t\tJsoner.serialize(jsonSerializable, writableDestination, EnumSet.of(SerializationOptions.ALLOW_JSONABLES,\
+    \ SerializationOptions.ALLOW_INVALIDS));\n\t}\n\n\t/** Serializes JSON values\
+    \ and only JSON values according to the RFC 7159 JSON specification.\n\t * @param\
+    \ jsonSerializable represents the object that should be serialized in JSON format.\n\
+    \t * @param writableDestination represents where the resulting JSON text is written\
+    \ to.\n\t * @throws IOException if the writableDestination encounters an I/O problem,\
+    \ like being closed while in use.\n\t * @throws IllegalArgumentException if the\
+    \ jsonSerializable isn't serializable in raw JSON. */\n\tpublic static void serializeStrictly(final\
+    \ Object jsonSerializable, final Writer writableDestination) throws IOException{\n\
+    \t\tJsoner.serialize(jsonSerializable, writableDestination, EnumSet.noneOf(SerializationOptions.class));\n\
+    \t}\n}\n"
+  learner_created: false
+- name: src/json_simple/JsonException.java
+  visible: true
+  text: "/* Copyright 2016-2017 Clifton Labs\n * Licensed under the Apache License,\
+    \ Version 2.0 (the \"License\");\n * you may not use this file except in compliance\
+    \ with the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage json_simple;\n\n/** JsonException explains how and where the problem\
+    \ occurs in the source JSON text during deserialization.\n * @since 3.0.0 */\n\
+    public class JsonException extends Exception{\n\t/** The kinds of exceptions that\
+    \ can trigger a JsonException. */\n\tpublic enum Problems{\n\t\t@SuppressWarnings(\"\
+    javadoc\")\n\t\tDISALLOWED_TOKEN,\n\t\t/** @since 2.3.0 to consolidate exceptions\
+    \ that occur during deserialization. */\n\t\tIOEXCEPTION,\n\t\t@SuppressWarnings(\"\
+    javadoc\")\n\t\tUNEXPECTED_CHARACTER,\n\t\t@SuppressWarnings(\"javadoc\")\n\t\t\
+    UNEXPECTED_EXCEPTION,\n\t\t@SuppressWarnings(\"javadoc\")\n\t\tUNEXPECTED_TOKEN;\n\
+    \t}\n\n\t@SuppressWarnings(\"javadoc\")\n\tprivate static final long\tserialVersionUID\t\
+    = 1L;\n\t@SuppressWarnings(\"javadoc\")\n\tprivate final int\t\t\tposition;\n\t\
+    @SuppressWarnings(\"javadoc\")\n\tprivate final Problems\t\tproblemType;\n\t@SuppressWarnings(\"\
+    javadoc\")\n\tprivate final Object\t\tunexpectedObject;\n\n\t/** Instantiates\
+    \ a JsonException without assumptions.\n\t * @param position where the exception\
+    \ occurred.\n\t * @param problemType how the exception occurred.\n\t * @param\
+    \ unexpectedObject what caused the exception. */\n\tpublic JsonException(final\
+    \ int position, final Problems problemType, final Object unexpectedObject){\n\t\
+    \tthis.position = position;\n\t\tthis.problemType = problemType;\n\t\tthis.unexpectedObject\
+    \ = unexpectedObject;\n\t\tif(Problems.IOEXCEPTION.equals(problemType) || Problems.UNEXPECTED_EXCEPTION.equals(problemType)){\n\
+    \t\t\tif(unexpectedObject instanceof Throwable){\n\t\t\t\tthis.initCause((Throwable)unexpectedObject);\n\
+    \t\t\t}\n\t\t}\n\t}\n\n\t@Override\n\tpublic String getMessage(){\n\t\tfinal StringBuilder\
+    \ sb = new StringBuilder();\n\t\tswitch(this.problemType){\n\t\t\tcase DISALLOWED_TOKEN:\n\
+    \t\t\t\tsb.append(\"The disallowed token (\").append(this.unexpectedObject).append(\"\
+    ) was found at position \").append(this.position).append(\". If this is in error,\
+    \ try again with a deserialization method in Jsoner that allows the token instead.\
+    \ Otherwise, fix the parsable string and try again.\");\n\t\t\t\tbreak;\n\t\t\t\
+    case IOEXCEPTION:\n\t\t\t\tsb.append(\"An IOException was encountered, ensure\
+    \ the reader is properly instantiated, isn't closed, or that it is ready before\
+    \ trying again.\\n\").append(this.unexpectedObject);\n\t\t\t\tbreak;\n\t\t\tcase\
+    \ UNEXPECTED_CHARACTER:\n\t\t\t\tsb.append(\"The unexpected character (\").append(this.unexpectedObject).append(\"\
+    ) was found at position \").append(this.position).append(\". Fix the parsable\
+    \ string and try again.\");\n\t\t\t\tbreak;\n\t\t\tcase UNEXPECTED_TOKEN:\n\t\t\
+    \t\tsb.append(\"The unexpected token \").append(this.unexpectedObject).append(\"\
+    \ was found at position \").append(this.position).append(\". Fix the parsable\
+    \ string and try again.\");\n\t\t\t\tbreak;\n\t\t\tcase UNEXPECTED_EXCEPTION:\n\
+    \t\t\t\tsb.append(\"Please report this to the library's maintainer. The unexpected\
+    \ exception that should be addressed before trying again occurred at position\
+    \ \").append(this.position).append(\":\\n\").append(this.unexpectedObject);\n\t\
+    \t\t\tbreak;\n\t\t\tdefault:\n\t\t\t\tsb.append(\"Please report this to the library's\
+    \ maintainer. An error at position \").append(this.position).append(\" occurred.\
+    \ There are no recovery recommendations available.\");\n\t\t\t\tbreak;\n\t\t}\n\
+    \t\treturn sb.toString();\n\t}\n\n\t/** Helps debug the location of a problem.\n\
+    \t * @return an index of the string character the error type occurred at. */\n\
+    \tpublic int getPosition(){\n\t\treturn this.position;\n\t}\n\n\t/** Helps find\
+    \ an appropriate solution for a problem.\n\t * @return the enumeration for how\
+    \ the exception occurred. */\n\tpublic Problems getProblemType(){\n\t\treturn\
+    \ this.problemType;\n\t}\n\n\t/** Helps identify the problem.\n\t * @return a\
+    \ representation of what caused the exception. */\n\tpublic Object getUnexpectedObject(){\n\
+    \t\treturn this.unexpectedObject;\n\t}\n}\n"
+  learner_created: false
+- name: src/json_simple/JsonKey.java
+  visible: true
+  text: "package json_simple;\n\n/** Represents the key of a JsonObject. Utilizing\
+    \ JsonKeys allows many of the convenience methods that self document\n * your\
+    \ JSON data model and make refactoring easier. It is recommended to implement\
+    \ JsonKeys as an enum.\n * @since 2.3.0 */\npublic interface JsonKey{\n\t/** The\
+    \ json-simple library uses a String for its keys.\n\t * @return a String representing\
+    \ the JsonKey. */\n\tpublic String getKey();\n\n\t/** A reasonable value for the\
+    \ key; such as a valid default, error value, or null.\n\t * @return an Object\
+    \ representing a reasonable general case value for the key. */\n\tpublic Object\
+    \ getValue();\n}\n"
+  learner_created: false
+- name: src/json_simple/JsonObject.java
+  visible: true
+  text: "/* Copyright 2016-2017 Clifton Labs\n * Licensed under the Apache License,\
+    \ Version 2.0 (the \"License\");\n * you may not use this file except in compliance\
+    \ with the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage json_simple;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\
+    import java.io.Writer;\nimport java.math.BigDecimal;\nimport java.util.*;\n\n\
+    /** JsonObject is a common non-thread safe data format for string to data mappings.\
+    \ The contents of a JsonObject are\n * only validated as JSON values on serialization.\
+    \ Meaning all values added to a JsonObject must be recognized by the\n * Jsoner\
+    \ for it to be a true 'JsonObject', so it is really a JsonableHashMap that will\
+    \ serialize to a JsonObject if all\n * of its contents are valid JSON.\n * @see\
+    \ Jsoner\n * @since 2.0.0 */\npublic class JsonObject extends HashMap<String,\
+    \ Object> implements Jsonable{\n\t/** The serialization version this class is\
+    \ compatible with. This value doesn't need to be incremented if and only\n\t *\
+    \ if the only changes to occur were updating comments, updating javadocs, adding\
+    \ new fields to the class, changing\n\t * the fields from static to non-static,\
+    \ or changing the fields from transient to non transient. All other changes\n\t\
+    \ * require this number be incremented. */\n\tprivate static final long serialVersionUID\
+    \ = 2L;\n\n\t/** Instantiates an empty JsonObject. */\n\tpublic JsonObject(){\n\
+    \t\tsuper();\n\t}\n\n\t/** Instantiate a new JsonObject by accepting a map's entries,\
+    \ which could lead to de/serialization issues of the\n\t * resulting JsonObject\
+    \ since the entry values aren't validated as JSON values.\n\t * @param map represents\
+    \ the mappings to produce the JsonObject with. */\n\tpublic JsonObject(final Map<String,\
+    \ ?> map){\n\t\tsuper(map);\n\t}\n\n\t/** A convenience method that assumes there\
+    \ is a BigDecimal, Number, or String at the given key. If a Number is\n\t * there\
+    \ its Number#toString() is used to construct a new BigDecimal(String). If a String\
+    \ is there it is used to\n\t * construct a new BigDecimal(String).\n\t * @param\
+    \ key representing where the value ought to be paired with.\n\t * @return a BigDecimal\
+    \ representing the value paired with the key.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @throws NumberFormatException\
+    \ if a String isn't a valid representation of a BigDecimal or if the Number\n\t\
+    \ *         represents the double or float Infinity or NaN.\n\t * @see BigDecimal\n\
+    \t * @see Number#toString()\n\t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey\
+    \ */\n\tpublic BigDecimal getBigDecimal(final JsonKey key){\n\t\tObject returnable\
+    \ = this.get(key.getKey());\n\t\tif(returnable instanceof BigDecimal){\n\t\t\t\
+    /* Success there was a BigDecimal or it defaulted. */\n\t\t}else if(returnable\
+    \ instanceof Number){\n\t\t\t/* A number can be used to construct a BigDecimal\
+    \ */\n\t\t\treturnable = new BigDecimal(returnable.toString());\n\t\t}else if(returnable\
+    \ instanceof String){\n\t\t\t/* A number can be used to construct a BigDecimal\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ (BigDecimal)returnable;\n\t}\n\n\t/** A convenience method that assumes there\
+    \ is a BigDecimal, Number, or String at the given key. If a Number is\n\t * there\
+    \ its Number#toString() is used to construct a new BigDecimal(String). If a String\
+    \ is there it is used to\n\t * construct a new BigDecimal(String).\n\t * @param\
+    \ key representing where the value ought to be paired with.\n\t * @return a BigDecimal\
+    \ representing the value paired with the key or JsonKey#getValue() if the key\
+    \ isn't present.\n\t * @throws ClassCastException if the value didn't match the\
+    \ assumed return type.\n\t * @throws NumberFormatException if a String isn't a\
+    \ valid representation of a BigDecimal or if the Number\n\t *         represents\
+    \ the double or float Infinity or NaN.\n\t * @see BigDecimal\n\t * @see Number#toString()\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic BigDecimal\
+    \ getBigDecimalOrDefault(final JsonKey key){\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\tif(returnable instanceof BigDecimal){\n\t\t\t/* Success there was a\
+    \ BigDecimal or it defaulted. */\n\t\t}else if(returnable instanceof Number){\n\
+    \t\t\t/* A number can be used to construct a BigDecimal */\n\t\t\treturnable =\
+    \ new BigDecimal(returnable.toString());\n\t\t}else if(returnable instanceof String){\n\
+    \t\t\t/* A String can be used to construct a BigDecimal */\n\t\t\treturnable =\
+    \ new BigDecimal((String)returnable);\n\t\t}\n\t\treturn (BigDecimal)returnable;\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Boolean or String value\
+    \ at the given key.\n\t * @param key representing where the value ought to be\
+    \ paired with.\n\t * @return a Boolean representing the value paired with the\
+    \ key.\n\t * @throws ClassCastException if the value didn't match the assumed\
+    \ return type.\n\t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\t\
+    public Boolean getBoolean(final JsonKey key){\n\t\tObject returnable = this.get(key.getKey());\n\
+    \t\tif(returnable instanceof String){\n\t\t\treturnable = Boolean.valueOf((String)returnable);\n\
+    \t\t}\n\t\treturn (Boolean)returnable;\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a Boolean or String value at the given key.\n\t * @param key\
+    \ representing where the value ought to be paired with.\n\t * @return a Boolean\
+    \ representing the value paired with the key or JsonKey#getValue() if the key\
+    \ isn't present.\n\t * @throws ClassCastException if the value didn't match the\
+    \ assumed return type.\n\t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey\
+    \ */\n\tpublic Boolean getBooleanOrDefault(final JsonKey key){\n\t\tObject returnable;\n\
+    \t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable = this.get(key.getKey());\n\
+    \t\t}else{\n\t\t\treturnable = key.getValue();\n\t\t}\n\t\tif(returnable instanceof\
+    \ String){\n\t\t\treturnable = Boolean.valueOf((String)returnable);\n\t\t}\n\t\
+    \treturn (Boolean)returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a Byte representing the\
+    \ value paired with the key (which may involve rounding or truncation).\n\t *\
+    \ @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#byteValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Byte getByte(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).byteValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Byte representing the value paired with the key or JsonKey#getValue() if the\
+    \ key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#byteValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Byte getByteOrDefault(final JsonKey key){\n\t\
+    \tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).byteValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Collection at the given key.\n\t * @param <T> the kind of collection\
+    \ to expect at the key. Note unless manually added, collection values will be\
+    \ a\n\t *        JsonArray.\n\t * @param key representing where the value ought\
+    \ to be paired with.\n\t * @return a Collection representing the value paired\
+    \ with the key.\n\t * @throws ClassCastException if the value didn't match the\
+    \ assumed return type.\n\t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey\
+    \ */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic <T extends Collection<?>> T\
+    \ getCollection(final JsonKey key){\n\t\t/* The unchecked warning is suppressed\
+    \ because there is no way of guaranteeing at compile time the cast will\n\t\t\
+    \ * work. */\n\t\treturn (T)this.get(key.getKey());\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Collection at the given key.\n\t * @param <T>\
+    \ the kind of collection to expect at the key. Note unless manually added, collection\
+    \ values will be a\n\t *        JsonArray.\n\t * @param key representing where\
+    \ the value ought to be paired with.\n\t * @return a Collection representing the\
+    \ value paired with the key or JsonKey#getValue() if the key isn't present..\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\t@SuppressWarnings(\"\
+    unchecked\")\n\tpublic <T extends Collection<?>> T getCollectionOrDefault(final\
+    \ JsonKey key){\n\t\t/* The unchecked warning is suppressed because there is no\
+    \ way of guaranteeing at compile time the cast will\n\t\t * work. */\n\t\tObject\
+    \ returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable = this.get(key.getKey());\n\
+    \t\t}else{\n\t\t\treturnable = key.getValue();\n\t\t}\n\t\treturn (T)returnable;\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given key.\n\t * @param key representing where the value ought to be\
+    \ paired with.\n\t * @return a Double representing the value paired with the key\
+    \ (which may involve rounding or truncation).\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @throws NumberFormatException\
+    \ if a String isn't a valid representation of a BigDecimal or if the Number\n\t\
+    \ *         represents the double or float Infinity or NaN.\n\t * @see Number#doubleValue()\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic Double getDouble(final\
+    \ JsonKey key){\n\t\tObject returnable = this.get(key.getKey());\n\t\tif(returnable\
+    \ == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable instanceof String){\n\
+    \t\t\t/* A String can be used to construct a BigDecimal. */\n\t\t\treturnable\
+    \ = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn ((Number)returnable).doubleValue();\n\
+    \t}\n\n\t/** A convenience method that assumes there is a Number or String value\
+    \ at the given key.\n\t * @param key representing where the value ought to be\
+    \ paired with.\n\t * @return a Double representing the value paired with the key\
+    \ or JsonKey#getValue() if the key isn't present (which\n\t *         may involve\
+    \ rounding or truncation).\n\t * @throws ClassCastException if the value didn't\
+    \ match the assumed return type.\n\t * @throws NumberFormatException if a String\
+    \ isn't a valid representation of a BigDecimal or if the Number\n\t *        \
+    \ represents the double or float Infinity or NaN.\n\t * @see Number#doubleValue()\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic Double getDoubleOrDefault(final\
+    \ JsonKey key){\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).doubleValue();\n\t}\n\n\t/** A convenience method that\
+    \ assumes there is a Number or String value at the given key.\n\t * @param key\
+    \ representing where the value ought to be paired with.\n\t * @return a Float\
+    \ representing the value paired with the key (which may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#floatValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Float getFloat(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).floatValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Float representing the value paired with the key or JsonKey#getValue() if\
+    \ the key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#floatValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Float getFloatOrDefault(final JsonKey key){\n\
+    \t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).floatValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return an Integer representing\
+    \ the value paired with the key (which may involve rounding or truncation).\n\t\
+    \ * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#intValue()\n\t * @see JsonKey\n\t * @since 2.3.0 to\
+    \ utilize JsonKey */\n\tpublic Integer getInteger(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).intValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ an Integer representing the value paired with the key or JsonKey#getValue()\
+    \ if the key isn't present\n\t *         (which may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#intValue()\n\t * @see JsonKey\n\t * @since 2.3.0 to\
+    \ utilize JsonKey */\n\tpublic Integer getIntegerOrDefault(final JsonKey key){\n\
+    \t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).intValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a Long representing the\
+    \ value paired with the key (which may involve rounding or truncation).\n\t *\
+    \ @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#longValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Long getLong(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).longValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Long representing the value paired with the key or JsonKey#getValue() if the\
+    \ key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#longValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Long getLongOrDefault(final JsonKey key){\n\t\
+    \tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).longValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Map at the given key.\n\t * @param <T> the kind of map to expect\
+    \ at the key. Note unless manually added, Map values will be a JsonObject.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Map representing the value paired with the key.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @see JsonKey\n\t *\
+    \ @since 2.3.0 to utilize JsonKey */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic\
+    \ <T extends Map<?, ?>> T getMap(final JsonKey key){\n\t\t/* The unchecked warning\
+    \ is suppressed because there is no way of guaranteeing at compile time the cast\
+    \ will\n\t\t * work. */\n\t\treturn (T)this.get(key.getKey());\n\t}\n\n\t/** A\
+    \ convenience method that assumes there is a Map at the given key.\n\t * @param\
+    \ <T> the kind of map to expect at the key. Note unless manually added, Map values\
+    \ will be a JsonObject.\n\t * @param key representing where the value ought to\
+    \ be paired with.\n\t * @return a Map representing the value paired with the key\
+    \ or JsonKey#getValue() if the key isn't present.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @see JsonKey\n\t *\
+    \ @since 2.3.0 to utilize JsonKey */\n\t@SuppressWarnings(\"unchecked\")\n\tpublic\
+    \ <T extends Map<?, ?>> T getMapOrDefault(final JsonKey key){\n\t\t/* The unchecked\
+    \ warning is suppressed because there is no way of guaranteeing at compile time\
+    \ the cast will\n\t\t * work. */\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\treturn (T)returnable;\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Number or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a Short representing\
+    \ the value paired with the key (which may involve rounding or truncation).\n\t\
+    \ * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#shortValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Short getShort(final JsonKey key){\n\t\tObject\
+    \ returnable = this.get(key.getKey());\n\t\tif(returnable == null){\n\t\t\treturn\
+    \ null;\n\t\t}\n\t\tif(returnable instanceof String){\n\t\t\t/* A String can be\
+    \ used to construct a BigDecimal. */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\
+    \t\t}\n\t\treturn ((Number)returnable).shortValue();\n\t}\n\n\t/** A convenience\
+    \ method that assumes there is a Number or String value at the given key.\n\t\
+    \ * @param key representing where the value ought to be paired with.\n\t * @return\
+    \ a Short representing the value paired with the key or JsonKey#getValue() if\
+    \ the key isn't present (which\n\t *         may involve rounding or truncation).\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @throws NumberFormatException if a String isn't a valid representation of\
+    \ a BigDecimal or if the Number\n\t *         represents the double or float Infinity\
+    \ or NaN.\n\t * @see Number#shortValue()\n\t * @see JsonKey\n\t * @since 2.3.0\
+    \ to utilize JsonKey */\n\tpublic Short getShortOrDefault(final JsonKey key){\n\
+    \t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\t\t\treturnable\
+    \ = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\t\
+    \t}\n\t\tif(returnable == null){\n\t\t\treturn null;\n\t\t}\n\t\tif(returnable\
+    \ instanceof String){\n\t\t\t/* A String can be used to construct a BigDecimal.\
+    \ */\n\t\t\treturnable = new BigDecimal((String)returnable);\n\t\t}\n\t\treturn\
+    \ ((Number)returnable).shortValue();\n\t}\n\n\t/** A convenience method that assumes\
+    \ there is a Boolean, Number, or String value at the given key.\n\t * @param key\
+    \ representing where the value ought to be paired with.\n\t * @return a String\
+    \ representing the value paired with the key.\n\t * @throws ClassCastException\
+    \ if the value didn't match the assumed return type.\n\t * @see JsonKey\n\t *\
+    \ @since 2.3.0 to utilize JsonKey */\n\tpublic String getString(final JsonKey\
+    \ key){\n\t\tObject returnable = this.get(key.getKey());\n\t\tif(returnable instanceof\
+    \ Boolean){\n\t\t\treturnable = returnable.toString();\n\t\t}else if(returnable\
+    \ instanceof Number){\n\t\t\treturnable = returnable.toString();\n\t\t}\n\t\t\
+    return (String)returnable;\n\t}\n\n\t/** A convenience method that assumes there\
+    \ is a Boolean, Number, or String value at the given key.\n\t * @param key representing\
+    \ where the value ought to be paired with.\n\t * @return a String representing\
+    \ the value paired with the key or JsonKey#getValue() if the key isn't present.\n\
+    \t * @throws ClassCastException if the value didn't match the assumed return type.\n\
+    \t * @see JsonKey\n\t * @since 2.3.0 to utilize JsonKey */\n\tpublic String getStringOrDefault(final\
+    \ JsonKey key){\n\t\tObject returnable;\n\t\tif(this.containsKey(key.getKey())){\n\
+    \t\t\treturnable = this.get(key.getKey());\n\t\t}else{\n\t\t\treturnable = key.getValue();\n\
+    \t\t}\n\t\tif(returnable instanceof Boolean){\n\t\t\treturnable = returnable.toString();\n\
+    \t\t}else if(returnable instanceof Number){\n\t\t\treturnable = returnable.toString();\n\
+    \t\t}\n\t\treturn (String)returnable;\n\t}\n\n\t/** Convenience method that calls\
+    \ put for the given key and value.\n\t * @param key represents the JsonKey used\
+    \ for the value's association in the map.\n\t * @param value represents the key's\
+    \ association in the map.\n\t * @see Map#put(Object, Object)\n\t * @since 3.1.1\
+    \ to use JsonKey instead of calling JsonKey#getKey() each time. */\n\tpublic void\
+    \ put(final JsonKey key, final Object value){\n\t\tthis.put(key.getKey(), value);\n\
+    \t}\n\n\t/** Calls putAll for the given map, but returns the JsonObject for chaining\
+    \ calls.\n\t * @param map represents the map to be copied into the JsonObject.\n\
+    \t * @return the JsonObject to allow chaining calls.\n\t * @see Map#putAll(Map)\n\
+    \t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonObject putAllChain(final\
+    \ Map<String, Object> map){\n\t\tthis.putAll(map);\n\t\treturn this;\n\t}\n\n\t\
+    /** Convenience method that calls put for the given key and value, but returns\
+    \ the JsonObject for chaining calls.\n\t * @param key represents the JsonKey used\
+    \ for the value's association in the map.\n\t * @param value represents the key's\
+    \ association in the map.\n\t * @return the JsonObject to allow chaining calls.\n\
+    \t * @see Map#put(Object, Object)\n\t * @since 3.1.1 to use JsonKey instead of\
+    \ calling JsonKey#getKey() each time. */\n\tpublic JsonObject putChain(final JsonKey\
+    \ key, final Object value){\n\t\tthis.put(key.getKey(), value);\n\t\treturn this;\n\
+    \t}\n\n\t/** Calls put for the given key and value, but returns the JsonObject\
+    \ for chaining calls.\n\t * @param key represents the value's association in the\
+    \ map.\n\t * @param value represents the key's association in the map.\n\t * @return\
+    \ the JsonObject to allow chaining calls.\n\t * @see Map#put(Object, Object)\n\
+    \t * @since 3.1.0 for inline instantiation. */\n\tpublic JsonObject putChain(final\
+    \ String key, final Object value){\n\t\tthis.put(key, value);\n\t\treturn this;\n\
+    \t}\n\n\t/** Convenience method that calls remove for the given key.\n\t * @param\
+    \ key represents the value's association in the map.\n\t * @return an object representing\
+    \ the removed value or null if there wasn't one.\n\t * @since 3.1.1 to use JsonKey\
+    \ instead of calling JsonKey#getKey() each time.\n\t * @see Map#remove(Object)\
+    \ */\n\tpublic Object remove(final JsonKey key){\n\t\treturn this.remove(key.getKey());\n\
+    \t}\n\n\t/** Convenience method that calls remove for the given key and value.\n\
+    \t * @param key represents the value's association in the map.\n\t * @param value\
+    \ represents the expected value at the given key.\n\t * @return a boolean, which\
+    \ is true if the value was removed. It is false otherwise.\n\t * @since 3.1.1\
+    \ to use JsonKey instead of calling JsonKey#getKey() each time.\n\t * @see Map#remove(Object,\
+    \ Object) */\n\tpublic boolean remove(final JsonKey key, final Object value){\n\
+    \t\treturn this.remove(key.getKey(), value);\n\t}\n\n\t/** Ensures the given keys\
+    \ are present.\n\t * @param keys represents the keys that must be present.\n\t\
+    \ * @throws NoSuchElementException if any of the given keys are missing.\n\t *\
+    \ @since 2.3.0 to ensure critical keys are in the JsonObject. */\n\tpublic void\
+    \ requireKeys(final JsonKey... keys){\n\t\t/* Track all of the missing keys. */\n\
+    \t\tfinal Set<JsonKey> missing = new HashSet<>();\n\t\tfor(final JsonKey k : keys){\n\
+    \t\t\tif(!this.containsKey(k.getKey())){\n\t\t\t\tmissing.add(k);\n\t\t\t}\n\t\
+    \t}\n\t\tif(!missing.isEmpty()){\n\t\t\t/* Report any missing keys in the exception.\
+    \ */\n\t\t\tfinal StringBuilder sb = new StringBuilder();\n\t\t\tfor(final JsonKey\
+    \ k : missing){\n\t\t\t\tsb.append(k.getKey()).append(\", \");\n\t\t\t}\n\t\t\t\
+    sb.setLength(sb.length() - 2);\n\t\t\tfinal String s = missing.size() > 1 ? \"\
+    s\" : \"\";\n\t\t\tthrow new NoSuchElementException(\"A JsonObject is missing\
+    \ required key\" + s + \": \" + sb.toString());\n\t\t}\n\t}\n\n\t/* (non-Javadoc)\n\
+    \t * @see org.json.simple.Jsonable#asJsonString() */\n\t@Override\n\tpublic String\
+    \ toJson(){\n\t\tfinal StringWriter writable = new StringWriter();\n\t\ttry{\n\
+    \t\t\tthis.toJson(writable);\n\t\t}catch(final IOException caught){\n\t\t\t/*\
+    \ See java.io.StringWriter. */\n\t\t}\n\t\treturn writable.toString();\n\t}\n\n\
+    \t/* (non-Javadoc)\n\t * @see org.json.simple.Jsonable#toJsonString(java.io.Writer)\
+    \ */\n\t@Override\n\tpublic void toJson(final Writer writable) throws IOException{\n\
+    \t\t/* Writes the map in JSON object format. */\n\t\tboolean isFirstEntry = true;\n\
+    \t\tfinal Iterator<Entry<String, Object>> entries = this.entrySet().iterator();\n\
+    \t\twritable.write('{');\n\t\twhile(entries.hasNext()){\n\t\t\tif(isFirstEntry){\n\
+    \t\t\t\tisFirstEntry = false;\n\t\t\t}else{\n\t\t\t\twritable.write(',');\n\t\t\
+    \t}\n\t\t\tfinal Entry<String, Object> entry = entries.next();\n\t\t\twritable.write(Jsoner.serialize(entry.getKey()));\n\
+    \t\t\twritable.write(':');\n\t\t\twritable.write(Jsoner.serialize(entry.getValue()));\n\
+    \t\t}\n\t\twritable.write('}');\n\t}\n}\n"
+  learner_created: false
+- name: src/json_simple/Yylex.java
+  visible: true
+  text: "/* The following code was generated by JFlex 1.4.3 on 1/9/18 8:05 PM */\n\
+    \npackage json_simple;\n\n\n/**\n * This class is a scanner generated by \n *\
+    \ <a href=\"http://www.jflex.de/\">JFlex</a> 1.4.3\n * on 1/9/18 8:05 PM from\
+    \ the specification file\n * <tt>/home/loegering/cliftonlabs/workspace/json-simple/src/main/lex/jsonstrict.lex</tt>\n\
+    \ */\nclass Yylex {\n\n  /** This character denotes the end of file */\n  public\
+    \ static final int YYEOF = -1;\n\n  /** initial size of the lookahead buffer */\n\
+    \  private static final int ZZ_BUFFERSIZE = 16384;\n\n  /** lexical states */\n\
+    \  public static final int YYINITIAL = 0;\n  public static final int STRING_BEGIN\
+    \ = 2;\n\n  /**\n   * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state\
+    \ l\n   * ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l\n \
+    \  *                  at the beginning of a line\n   * l is of the form l = 2*k,\
+    \ k a non negative integer\n   */\n  private static final int ZZ_LEXSTATE[] =\
+    \ { \n     0,  0,  1, 1\n  };\n\n  /** \n   * Translates characters to character\
+    \ classes\n   */\n  private static final String ZZ_CMAP_PACKED = \n    \"\\11\\\
+    0\\1\\7\\1\\7\\2\\0\\1\\7\\22\\0\\1\\7\\1\\0\\1\\11\\10\\0\"+\n    \"\\1\\6\\\
+    1\\31\\1\\2\\1\\4\\1\\12\\12\\3\\1\\32\\6\\0\\4\\1\\1\\5\"+\n    \"\\1\\1\\24\\\
+    0\\1\\27\\1\\10\\1\\30\\3\\0\\1\\22\\1\\13\\2\\1\\1\\21\"+\n    \"\\1\\14\\5\\\
+    0\\1\\23\\1\\0\\1\\15\\3\\0\\1\\16\\1\\24\\1\\17\\1\\20\"+\n    \"\\5\\0\\1\\\
+    25\\1\\0\\1\\26\\uff82\\0\";\n\n  /** \n   * Translates characters to character\
+    \ classes\n   */\n  private static final char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);\n\
+    \n  /** \n   * Translates DFA states to action switch labels.\n   */\n  private\
+    \ static final int [] ZZ_ACTION = zzUnpackAction();\n\n  private static final\
+    \ String ZZ_ACTION_PACKED_0 =\n    \"\\2\\0\\2\\1\\1\\2\\1\\3\\1\\4\\3\\1\\1\\\
+    5\\1\\6\"+\n    \"\\1\\7\\1\\10\\1\\11\\1\\12\\1\\13\\1\\14\\1\\15\\5\\0\"+\n\
+    \    \"\\1\\14\\1\\16\\1\\17\\1\\20\\1\\21\\1\\22\\1\\23\\1\\24\"+\n    \"\\1\\\
+    0\\1\\2\\1\\0\\1\\2\\4\\0\\1\\25\\1\\26\\2\\0\"+\n    \"\\1\\27\";\n\n  private\
+    \ static int [] zzUnpackAction() {\n    int [] result = new int[45];\n    int\
+    \ offset = 0;\n    offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);\n\
+    \    return result;\n  }\n\n  private static int zzUnpackAction(String packed,\
+    \ int offset, int [] result) {\n    int i = 0;       /* index in packed string\
+    \  */\n    int j = offset;  /* index in unpacked array */\n    int l = packed.length();\n\
+    \    while (i < l) {\n      int count = packed.charAt(i++);\n      int value =\
+    \ packed.charAt(i++);\n      do result[j++] = value; while (--count > 0);\n  \
+    \  }\n    return j;\n  }\n\n\n  /** \n   * Translates a state to a row index in\
+    \ the transition table\n   */\n  private static final int [] ZZ_ROWMAP = zzUnpackRowMap();\n\
+    \n  private static final String ZZ_ROWMAP_PACKED_0 =\n    \"\\0\\0\\0\\33\\0\\\
+    66\\0\\121\\0\\154\\0\\207\\0\\66\\0\\242\"+\n    \"\\0\\275\\0\\330\\0\\66\\\
+    0\\66\\0\\66\\0\\66\\0\\66\\0\\66\"+\n    \"\\0\\363\\0\\u010e\\0\\66\\0\\u0129\\\
+    0\\u0144\\0\\u015f\\0\\u017a\\0\\u0195\"+\n    \"\\0\\66\\0\\66\\0\\66\\0\\66\\\
+    0\\66\\0\\66\\0\\66\\0\\66\"+\n    \"\\0\\u01b0\\0\\u01cb\\0\\u01e6\\0\\u01e6\\\
+    0\\u0201\\0\\u021c\\0\\u0237\\0\\u0252\"+\n    \"\\0\\66\\0\\66\\0\\u026d\\0\\\
+    u0288\\0\\66\";\n\n  private static int [] zzUnpackRowMap() {\n    int [] result\
+    \ = new int[45];\n    int offset = 0;\n    offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0,\
+    \ offset, result);\n    return result;\n  }\n\n  private static int zzUnpackRowMap(String\
+    \ packed, int offset, int [] result) {\n    int i = 0;  /* index in packed string\
+    \  */\n    int j = offset;  /* index in unpacked array */\n    int l = packed.length();\n\
+    \    while (i < l) {\n      int high = packed.charAt(i++) << 16;\n      result[j++]\
+    \ = high | packed.charAt(i++);\n    }\n    return j;\n  }\n\n  /** \n   * The\
+    \ transition table of the DFA\n   */\n  private static final int ZZ_TRANS [] =\
+    \ {\n    2, 2, 3, 4, 2, 2, 2, 5, 2, 6, \n    2, 2, 7, 8, 2, 9, 2, 2, 2, 2, \n\
+    \    2, 10, 11, 12, 13, 14, 15, 16, 16, 16, \n    16, 16, 16, 16, 16, 17, 18,\
+    \ 16, 16, 16, \n    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, \n    16, 16, 16,\
+    \ 16, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n\
+    \    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, 4, -1, -1,\
+    \ -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, -1, \n    -1, 4, 19, 20, -1, -1, -1, -1, -1, -1, \n\
+    \    -1, -1, -1, -1, -1, 20, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, -1, \n    -1, -1, 5, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    21, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, 22, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    23, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, 16, 16, 16, 16, 16, 16, 16, \n    16, -1, -1, 16,\
+    \ 16, 16, 16, 16, 16, 16, \n    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, 24, 25, \n    26, 27, 28, 29, 30, 31, 32, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    33, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, 34, 35, -1, -1, \n    34, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ 36, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, 37, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, 38, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, 39, -1, 39, -1, 39,\
+    \ -1, -1, \n    -1, -1, -1, 39, 39, -1, -1, -1, -1, 39, \n    39, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, 33, -1, 20, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, 20, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1,\
+    \ -1, 35, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, 38, -1, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1,\
+    \ -1, -1, -1, -1, -1, 40, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, \n    -1, -1, -1, -1, 41, -1, -1, -1,\
+    \ -1, -1, \n    -1, -1, -1, -1, -1, 42, -1, 42, -1, 42, \n    -1, -1, -1, -1,\
+    \ -1, 42, 42, -1, -1, -1, \n    -1, 42, 42, -1, -1, -1, -1, -1, -1, -1, \n   \
+    \ -1, -1, 43, -1, 43, -1, 43, -1, -1, -1, \n    -1, -1, 43, 43, -1, -1, -1, -1,\
+    \ 43, 43, \n    -1, -1, -1, -1, -1, -1, -1, -1, -1, 44, \n    -1, 44, -1, 44,\
+    \ -1, -1, -1, -1, -1, 44, \n    44, -1, -1, -1, -1, 44, 44, -1, -1, -1, \n   \
+    \ -1, -1, -1, -1, -1, \n  };\n\n  /* error codes */\n  private static final int\
+    \ ZZ_UNKNOWN_ERROR = 0;\n  private static final int ZZ_NO_MATCH = 1;\n  private\
+    \ static final int ZZ_PUSHBACK_2BIG = 2;\n\n  /* error messages for the codes\
+    \ above */\n  private static final String ZZ_ERROR_MSG[] = {\n    \"Unkown internal\
+    \ scanner error\",\n    \"Error: could not match input\",\n    \"Error: pushback\
+    \ value was too large\"\n  };\n\n  /**\n   * ZZ_ATTRIBUTE[aState] contains the\
+    \ attributes of state <code>aState</code>\n   */\n  private static final int []\
+    \ ZZ_ATTRIBUTE = zzUnpackAttribute();\n\n  private static final String ZZ_ATTRIBUTE_PACKED_0\
+    \ =\n    \"\\2\\0\\1\\11\\3\\1\\1\\11\\3\\1\\6\\11\\2\\1\\1\\11\"+\n    \"\\5\\\
+    0\\10\\11\\1\\0\\1\\1\\1\\0\\1\\1\\4\\0\\2\\11\"+\n    \"\\2\\0\\1\\11\";\n\n\
+    \  private static int [] zzUnpackAttribute() {\n    int [] result = new int[45];\n\
+    \    int offset = 0;\n    offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset,\
+    \ result);\n    return result;\n  }\n\n  private static int zzUnpackAttribute(String\
+    \ packed, int offset, int [] result) {\n    int i = 0;       /* index in packed\
+    \ string  */\n    int j = offset;  /* index in unpacked array */\n    int l =\
+    \ packed.length();\n    while (i < l) {\n      int count = packed.charAt(i++);\n\
+    \      int value = packed.charAt(i++);\n      do result[j++] = value; while (--count\
+    \ > 0);\n    }\n    return j;\n  }\n\n  /** the input device */\n  private java.io.Reader\
+    \ zzReader;\n\n  /** the current state of the DFA */\n  private int zzState;\n\
+    \n  /** the current lexical state */\n  private int zzLexicalState = YYINITIAL;\n\
+    \n  /** this buffer contains the current text to be matched and is\n      the\
+    \ source of the yytext() string */\n  private char zzBuffer[] = new char[ZZ_BUFFERSIZE];\n\
+    \n  /** the textposition at the last accepting state */\n  private int zzMarkedPos;\n\
+    \n  /** the current text position in the buffer */\n  private int zzCurrentPos;\n\
+    \n  /** startRead marks the beginning of the yytext() string in the buffer */\n\
+    \  private int zzStartRead;\n\n  /** endRead marks the last character in the buffer,\
+    \ that has been read\n      from input */\n  private int zzEndRead;\n\n  /** number\
+    \ of newlines encountered up to the start of the matched text */\n  private int\
+    \ yyline;\n\n  /** the number of characters up to the start of the matched text\
+    \ */\n  private int yychar;\n\n  /**\n   * the number of characters from the last\
+    \ newline up to the start of the \n   * matched text\n   */\n  private int yycolumn;\n\
+    \n  /** \n   * zzAtBOL == true <=> the scanner is currently at the beginning of\
+    \ a line\n   */\n  private boolean zzAtBOL = true;\n\n  /** zzAtEOF == true <=>\
+    \ the scanner is at the EOF */\n  private boolean zzAtEOF;\n\n  /** denotes if\
+    \ the user-EOF-code has already been executed */\n  private boolean zzEOFDone;\n\
+    \n  /* user code: */\nprivate StringBuilder sb=new StringBuilder();\n\nint getPosition(){\n\
+    \treturn yychar;\n}\n\n\n\n  /**\n   * Creates a new scanner\n   * There is also\
+    \ a java.io.InputStream version of this constructor.\n   *\n   * @param   in \
+    \ the java.io.Reader to read input from.\n   */\n  Yylex(java.io.Reader in) {\n\
+    \    this.zzReader = in;\n  }\n\n  /**\n   * Creates a new scanner.\n   * There\
+    \ is also java.io.Reader version of this constructor.\n   *\n   * @param   in\
+    \  the java.io.Inputstream to read input from.\n   */\n  Yylex(java.io.InputStream\
+    \ in) {\n    this(new java.io.InputStreamReader(in));\n  }\n\n  /** \n   * Unpacks\
+    \ the compressed character translation table.\n   *\n   * @param packed   the\
+    \ packed character translation table\n   * @return         the unpacked character\
+    \ translation table\n   */\n  private static char [] zzUnpackCMap(String packed)\
+    \ {\n    char [] map = new char[0x10000];\n    int i = 0;  /* index in packed\
+    \ string  */\n    int j = 0;  /* index in unpacked array */\n    while (i < 90)\
+    \ {\n      int  count = packed.charAt(i++);\n      char value = packed.charAt(i++);\n\
+    \      do map[j++] = value; while (--count > 0);\n    }\n    return map;\n  }\n\
+    \n\n  /**\n   * Refills the input buffer.\n   *\n   * @return      <code>false</code>,\
+    \ iff there was new input.\n   * \n   * @exception   java.io.IOException  if any\
+    \ I/O-Error occurs\n   */\n  private boolean zzRefill() throws java.io.IOException\
+    \ {\n\n    /* first: make room (if you can) */\n    if (zzStartRead > 0) {\n \
+    \     System.arraycopy(zzBuffer, zzStartRead,\n                       zzBuffer,\
+    \ 0,\n                       zzEndRead-zzStartRead);\n\n      /* translate stored\
+    \ positions */\n      zzEndRead-= zzStartRead;\n      zzCurrentPos-= zzStartRead;\n\
+    \      zzMarkedPos-= zzStartRead;\n      zzStartRead = 0;\n    }\n\n    /* is\
+    \ the buffer big enough? */\n    if (zzCurrentPos >= zzBuffer.length) {\n    \
+    \  /* if not: blow it up */\n      char newBuffer[] = new char[zzCurrentPos*2];\n\
+    \      System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);\n      zzBuffer\
+    \ = newBuffer;\n    }\n\n    /* finally: fill the buffer with new input */\n \
+    \   int numRead = zzReader.read(zzBuffer, zzEndRead,\n                       \
+    \                     zzBuffer.length-zzEndRead);\n\n    if (numRead > 0) {\n\
+    \      zzEndRead+= numRead;\n      return false;\n    }\n    // unlikely but not\
+    \ impossible: read 0 characters, but not at end of stream    \n    if (numRead\
+    \ == 0) {\n      int c = zzReader.read();\n      if (c == -1) {\n        return\
+    \ true;\n      } else {\n        zzBuffer[zzEndRead++] = (char) c;\n        return\
+    \ false;\n      }     \n    }\n\n\t// numRead < 0\n    return true;\n  }\n\n \
+    \   \n  /**\n   * Closes the input stream.\n   */\n  public final void yyclose()\
+    \ throws java.io.IOException {\n    zzAtEOF = true;            /* indicate end\
+    \ of file */\n    zzEndRead = zzStartRead;  /* invalidate buffer    */\n\n   \
+    \ if (zzReader != null)\n      zzReader.close();\n  }\n\n\n  /**\n   * Resets\
+    \ the scanner to read from a new input stream.\n   * Does not close the old reader.\n\
+    \   *\n   * All internal variables are reset, the old input stream \n   * <b>cannot</b>\
+    \ be reused (internal buffer is discarded and lost).\n   * Lexical state is set\
+    \ to <tt>ZZ_INITIAL</tt>.\n   *\n   * @param reader   the new input stream \n\
+    \   */\n  public final void yyreset(java.io.Reader reader) {\n    zzReader = reader;\n\
+    \    zzAtBOL  = true;\n    zzAtEOF  = false;\n    zzEOFDone = false;\n    zzEndRead\
+    \ = zzStartRead = 0;\n    zzCurrentPos = zzMarkedPos = 0;\n    yyline = yychar\
+    \ = yycolumn = 0;\n    zzLexicalState = YYINITIAL;\n  }\n\n\n  /**\n   * Returns\
+    \ the current lexical state.\n   */\n  public final int yystate() {\n    return\
+    \ zzLexicalState;\n  }\n\n\n  /**\n   * Enters a new lexical state\n   *\n   *\
+    \ @param newState the new lexical state\n   */\n  public final void yybegin(int\
+    \ newState) {\n    zzLexicalState = newState;\n  }\n\n\n  /**\n   * Returns the\
+    \ text matched by the current regular expression.\n   */\n  public final String\
+    \ yytext() {\n    return new String( zzBuffer, zzStartRead, zzMarkedPos-zzStartRead\
+    \ );\n  }\n\n\n  /**\n   * Returns the character at position <tt>pos</tt> from\
+    \ the \n   * matched text. \n   * \n   * It is equivalent to yytext().charAt(pos),\
+    \ but faster\n   *\n   * @param pos the position of the character to fetch. \n\
+    \   *            A value from 0 to yylength()-1.\n   *\n   * @return the character\
+    \ at position pos\n   */\n  public final char yycharat(int pos) {\n    return\
+    \ zzBuffer[zzStartRead+pos];\n  }\n\n\n  /**\n   * Returns the length of the matched\
+    \ text region.\n   */\n  public final int yylength() {\n    return zzMarkedPos-zzStartRead;\n\
+    \  }\n\n\n  /**\n   * Reports an error that occured while scanning.\n   *\n  \
+    \ * In a wellformed scanner (no or only correct usage of \n   * yypushback(int)\
+    \ and a match-all fallback rule) this method \n   * will only be called with things\
+    \ that \"Can't Possibly Happen\".\n   * If this method is called, something is\
+    \ seriously wrong\n   * (e.g. a JFlex bug producing a faulty scanner etc.).\n\
+    \   *\n   * Usual syntax/scanner level error handling should be done\n   * in\
+    \ error fallback rules.\n   *\n   * @param   errorCode  the code of the errormessage\
+    \ to display\n   */\n  private void zzScanError(int errorCode) {\n    String message;\n\
+    \    try {\n      message = ZZ_ERROR_MSG[errorCode];\n    }\n    catch (ArrayIndexOutOfBoundsException\
+    \ e) {\n      message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];\n    }\n\n    throw new\
+    \ Error(message);\n  } \n\n\n  /**\n   * Pushes the specified amount of characters\
+    \ back into the input stream.\n   *\n   * They will be read again by then next\
+    \ call of the scanning method\n   *\n   * @param number  the number of characters\
+    \ to be read again.\n   *                This number must not be greater than\
+    \ yylength()!\n   */\n  public void yypushback(int number)  {\n    if ( number\
+    \ > yylength() )\n      zzScanError(ZZ_PUSHBACK_2BIG);\n\n    zzMarkedPos -= number;\n\
+    \  }\n\n\n  /**\n   * Resumes scanning until the next regular expression is matched,\n\
+    \   * the end of input is encountered or an I/O-Error occurs.\n   *\n   * @return\
+    \      the next token\n   * @exception   java.io.IOException  if any I/O-Error\
+    \ occurs\n   */\n  public Yytoken yylex() throws java.io.IOException, JsonException\
+    \ {\n    int zzInput;\n    int zzAction;\n\n    // cached fields:\n    int zzCurrentPosL;\n\
+    \    int zzMarkedPosL;\n    int zzEndReadL = zzEndRead;\n    char [] zzBufferL\
+    \ = zzBuffer;\n    char [] zzCMapL = ZZ_CMAP;\n\n    int [] zzTransL = ZZ_TRANS;\n\
+    \    int [] zzRowMapL = ZZ_ROWMAP;\n    int [] zzAttrL = ZZ_ATTRIBUTE;\n\n   \
+    \ while (true) {\n      zzMarkedPosL = zzMarkedPos;\n\n      yychar+= zzMarkedPosL-zzStartRead;\n\
+    \n      zzAction = -1;\n\n      zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;\n\
+    \  \n      zzState = ZZ_LEXSTATE[zzLexicalState];\n\n\n      zzForAction: {\n\
+    \        while (true) {\n    \n          if (zzCurrentPosL < zzEndReadL)\n   \
+    \         zzInput = zzBufferL[zzCurrentPosL++];\n          else if (zzAtEOF) {\n\
+    \            zzInput = YYEOF;\n            break zzForAction;\n          }\n \
+    \         else {\n            // store back cached positions\n            zzCurrentPos\
+    \  = zzCurrentPosL;\n            zzMarkedPos   = zzMarkedPosL;\n            boolean\
+    \ eof = zzRefill();\n            // get translated positions and possibly new\
+    \ buffer\n            zzCurrentPosL  = zzCurrentPos;\n            zzMarkedPosL\
+    \   = zzMarkedPos;\n            zzBufferL      = zzBuffer;\n            zzEndReadL\
+    \     = zzEndRead;\n            if (eof) {\n              zzInput = YYEOF;\n \
+    \             break zzForAction;\n            }\n            else {\n        \
+    \      zzInput = zzBufferL[zzCurrentPosL++];\n            }\n          }\n   \
+    \       int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];\n    \
+    \      if (zzNext == -1) break zzForAction;\n          zzState = zzNext;\n\n \
+    \         int zzAttributes = zzAttrL[zzState];\n          if ( (zzAttributes &\
+    \ 1) == 1 ) {\n            zzAction = zzState;\n            zzMarkedPosL = zzCurrentPosL;\n\
+    \            if ( (zzAttributes & 8) == 8 ) break zzForAction;\n          }\n\n\
+    \        }\n      }\n\n      // store back cached position\n      zzMarkedPos\
+    \ = zzMarkedPosL;\n\n      switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction])\
+    \ {\n        case 1: \n          { throw new JsonException(yychar, JsonException.Problems.UNEXPECTED_CHARACTER,\
+    \ new Character(yycharat(0)));\n          }\n        case 24: break;\n       \
+    \ case 4: \n          { sb = null; sb = new StringBuilder(); yybegin(STRING_BEGIN);\n\
+    \          }\n        case 25: break;\n        case 11: \n          { sb.append(yytext());\n\
+    \          }\n        case 26: break;\n        case 5: \n          { return new\
+    \ Yytoken(Yytoken.Types.LEFT_BRACE, null);\n          }\n        case 27: break;\n\
+    \        case 16: \n          { sb.append('\\b');\n          }\n        case 28:\
+    \ break;\n        case 22: \n          { Boolean val=Boolean.valueOf(yytext());\
+    \ return new Yytoken(Yytoken.Types.DATUM, val);\n          }\n        case 29:\
+    \ break;\n        case 12: \n          { sb.append('\\\\');\n          }\n   \
+    \     case 30: break;\n        case 10: \n          { return new Yytoken(Yytoken.Types.COLON,\
+    \ null);\n          }\n        case 31: break;\n        case 9: \n          {\
+    \ return new Yytoken(Yytoken.Types.COMMA, null);\n          }\n        case 32:\
+    \ break;\n        case 21: \n          { return new Yytoken(Yytoken.Types.DATUM,\
+    \ null);\n          }\n        case 33: break;\n        case 19: \n          {\
+    \ sb.append('\\r');\n          }\n        case 34: break;\n        case 15: \n\
+    \          { sb.append('/');\n          }\n        case 35: break;\n        case\
+    \ 2: \n          { java.math.BigDecimal val= new java.math.BigDecimal(yytext());\
+    \ return new Yytoken(Yytoken.Types.DATUM, val);\n          }\n        case 36:\
+    \ break;\n        case 14: \n          { sb.append('\"');\n          }\n     \
+    \   case 37: break;\n        case 8: \n          { return new Yytoken(Yytoken.Types.RIGHT_SQUARE,\
+    \ null);\n          }\n        case 38: break;\n        case 23: \n          {\
+    \ try{\n\t\t\tint ch=Integer.parseInt(yytext().substring(2),16);\n\t\t\tsb.append((char)ch);\n\
+    \t\t}catch(Exception e){\n\t\t\t/* The lexer is broken if it can build a 4 byte\
+    \ character code and fail to append the character. */\n\t\t\tthrow new JsonException(yychar,\
+    \ JsonException.Problems.UNEXPECTED_EXCEPTION, e);\n\t\t}\n          }\n     \
+    \   case 39: break;\n        case 17: \n          { sb.append('\\f');\n      \
+    \    }\n        case 40: break;\n        case 6: \n          { return new Yytoken(Yytoken.Types.RIGHT_BRACE,\
+    \ null);\n          }\n        case 41: break;\n        case 20: \n          {\
+    \ sb.append('\\t');\n          }\n        case 42: break;\n        case 7: \n\
+    \          { return new Yytoken(Yytoken.Types.LEFT_SQUARE, null);\n          }\n\
+    \        case 43: break;\n        case 18: \n          { sb.append('\\n');\n \
+    \         }\n        case 44: break;\n        case 13: \n          { yybegin(YYINITIAL);return\
+    \ new Yytoken(Yytoken.Types.DATUM, sb.toString());\n          }\n        case\
+    \ 45: break;\n        case 3: \n          { \n          }\n        case 46: break;\n\
+    \        default: \n          if (zzInput == YYEOF && zzStartRead == zzCurrentPos)\
+    \ {\n            zzAtEOF = true;\n            return null;\n          } \n   \
+    \       else {\n            zzScanError(ZZ_NO_MATCH);\n          }\n      }\n\
+    \    }\n  }\n\n\n}\n"
+  learner_created: false
+- name: src/json_simple/Yytoken.java
+  visible: true
+  text: "/* Copyright 2016 Clifton Labs\n * Licensed under the Apache License, Version\
+    \ 2.0 (the \"License\");\n * you may not use this file except in compliance with\
+    \ the License.\n * You may obtain a copy of the License at\n * http://www.apache.org/licenses/LICENSE-2.0\n\
+    \ * Unless required by applicable law or agreed to in writing, software\n * distributed\
+    \ under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES\
+    \ OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for\
+    \ the specific language governing permissions and\n * limitations under the License.\
+    \ */\npackage json_simple;\n\n/** Represents structural entities in JSON.\n *\
+    \ @since 2.0.0 */\nclass Yytoken{\n\t/** Represents the different kinds of tokens.\
+    \ */\n\tenum Types{\n\t\t/** Tokens of this type will always have a value of \"\
+    :\" */\n\t\tCOLON,\n\t\t/** Tokens of this type will always have a value of \"\
+    ,\" */\n\t\tCOMMA,\n\t\t/** Tokens of this type will always have a value that\
+    \ is a boolean, null, number, or string. */\n\t\tDATUM,\n\t\t/** Tokens of this\
+    \ type will always have a value of \"\" */\n\t\tEND,\n\t\t/** Tokens of this type\
+    \ will always have a value of \"{\" */\n\t\tLEFT_BRACE,\n\t\t/** Tokens of this\
+    \ type will always have a value of \"[\" */\n\t\tLEFT_SQUARE,\n\t\t/** Tokens\
+    \ of this type will always have a value of \"}\" */\n\t\tRIGHT_BRACE,\n\t\t/**\
+    \ Tokens of this type will always have a value of \"]\" */\n\t\tRIGHT_SQUARE;\n\
+    \t}\n\n\t@SuppressWarnings(\"javadoc\")\n\tprivate final Types\t\ttype;\n\t@SuppressWarnings(\"\
+    javadoc\")\n\tprivate final Object\tvalue;\n\n\t/** @param type represents the\
+    \ kind of token the instantiated token will be.\n\t * @param value represents\
+    \ the value the token is associated with, will be ignored unless type is equal\
+    \ to\n\t *        Types.DATUM.\n\t * @see Types */\n\tYytoken(final Types type,\
+    \ final Object value){\n\t\t/* Sanity check. Make sure the value is ignored for\
+    \ the proper value unless it is a datum token. */\n\t\tswitch(type){\n\t\t\tcase\
+    \ COLON:\n\t\t\t\tthis.value = \":\";\n\t\t\t\tbreak;\n\t\t\tcase COMMA:\n\t\t\
+    \t\tthis.value = \",\";\n\t\t\t\tbreak;\n\t\t\tcase END:\n\t\t\t\tthis.value =\
+    \ \"\";\n\t\t\t\tbreak;\n\t\t\tcase LEFT_BRACE:\n\t\t\t\tthis.value = \"{\";\n\
+    \t\t\t\tbreak;\n\t\t\tcase LEFT_SQUARE:\n\t\t\t\tthis.value = \"[\";\n\t\t\t\t\
+    break;\n\t\t\tcase RIGHT_BRACE:\n\t\t\t\tthis.value = \"}\";\n\t\t\t\tbreak;\n\
+    \t\t\tcase RIGHT_SQUARE:\n\t\t\t\tthis.value = \"]\";\n\t\t\t\tbreak;\n\t\t\t\
+    default:\n\t\t\t\tthis.value = value;\n\t\t\t\tbreak;\n\t\t}\n\t\tthis.type =\
+    \ type;\n\t}\n\n\t/** @return which of the {@link Types} the token is.\n\t * @see\
+    \ Types */\n\tTypes getType(){\n\t\treturn this.type;\n\t}\n\n\t/** @return what\
+    \ the token is.\n\t * @see Types */\n\tObject getValue(){\n\t\treturn this.value;\n\
+    \t}\n\n\t@Override\n\tpublic String toString(){\n\t\tfinal StringBuilder sb =\
+    \ new StringBuilder();\n\t\tsb.append(this.type.toString()).append(\"(\").append(this.value).append(\"\
+    )\");\n\t\treturn sb.toString();\n\t}\n}\n"
+  learner_created: false
+- name: test.txt
+  visible: true
+  learner_created: true
+status: Unchecked
+record: -1
